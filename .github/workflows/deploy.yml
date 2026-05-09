@@ -59,15 +59,8 @@ jobs:
       - name: Upload page artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist/
+          path: docs/_site/
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Upload coverage to CodeCov
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/lcov.info
-          fail_ci_if_error: true
