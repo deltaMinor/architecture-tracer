@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Architecture Tracer</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Architecture Tracer" />
+<meta property="og:locale" content="en_US" />
+<link rel="canonical" href="http://localhost:4000/" />
+<meta property="og:url" content="http://localhost:4000/" />
+<meta property="og:site_name" content="Architecture Tracer" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Architecture Tracer" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","headline":"Architecture Tracer","name":"Architecture Tracer","url":"http://localhost:4000/"}</script>
+<!-- End Jekyll SEO tag -->
+<link id="main-stylesheet" rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Architecture Tracer" />
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper">
+    <a class="site-title" rel="author" href="/">Architecture Tracer</a>
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon"></span>
+        </label>
+
+        <div class="nav-items">
+  <a class="nav-item" href="/developer-guide.html">Developer Guide</a>
+  <a class="nav-item" href="/">Architecture Tracer</a>
+  <a class="nav-item" href="/user-guide.html">User Guide</a>
+</div>
+
+      </nav>
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Architecture Tracer</h1>
+  </header>
+
+  <div class="post-content">
+    <p>Architecture Tracer is a web-based application which allows you to construct system architecture simulations and run simultation traces through them via a Command Line Interface(CLI).</p>
+
+<p>You can try out Architecture Tracer directly below, or use it on your local machine after installing it by following the installation guide below.</p>
+
+<iframe src="/architecture-tracer/app/" title="Architecture Tracer App" width="100%" height="650px" style="border:1px solid #e0e0e0; border-radius:8px;">
+</iframe>
+
+<h2 id="installation-guide">Installation guide</h2>
+<ol>
+  <li>Install Node.js from https://nodejs.org.</li>
+  <li>Download the latest release here.</li>
+  <li>Unzip the folder, and open the terminal inside the folder.</li>
+  <li>Paste these two commands one at a time:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm install
+npm run dev
+</code></pre></div>    </div>
+  </li>
+  <li>Open http://localhost:5173 in your browser.</li>
+</ol>
+
+<h2 id="commands">Commands</h2>
+<box type="info" seamless="">
+
+**Notes about the command format:**
+
+- Words in `SCREAMING_SNAKE_CASE` are parameters to be supplied by the user.
+  e.g. in `add n/LABEL`, `LABEL` is a parameter, so you might write `add n/Database`.
+
+- Unrecognised commands or commands with incorrect formatting will result in an error message and be rejected by the app.
+
+</box>
+
+<h3 id="adding-a-new-node-add-n">Adding a new node: <code class="language-plaintext highlighter-rouge">add n/</code></h3>
+<p>Adds a new node with a given label.</p>
+
+<p>Format: <code class="language-plaintext highlighter-rouge">add n/LABEL</code></p>
+
+<p>Example:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">add n/Internet</code>: Creates a new node labelled “Internet”.</li>
+</ul>
+
+<h3 id="adding-a-new-edge-add-e">Adding a new edge: <code class="language-plaintext highlighter-rouge">add e/</code></h3>
+<p>Adds a new edge connecting two nodes.</p>
+
+<p>Format: <code class="language-plaintext highlighter-rouge">add e/n#INDEX n#INDEX</code></p>
+
+<p>Example:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">add e/n#1 n#3</code>: Connects the nodes with id 1 and 3 together.</li>
+</ul>
+
+<h3 id="adding-a-new-edge-add-e-1">Adding a new edge: <code class="language-plaintext highlighter-rouge">add e/</code></h3>
+<p>Adds a new edge connecting two nodes.</p>
+
+<p>Format: <code class="language-plaintext highlighter-rouge">add e/n#ID n#ID</code></p>
+
+<p>Example:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">add e/n#1 n#3</code>: Connects the nodes with id 1 and 3 together.</li>
+</ul>
+
+<h3 id="deleting-a-node-or-edge-del">Deleting a node or edge: <code class="language-plaintext highlighter-rouge">del</code></h3>
+<p>Delete a node or an edge using its id.</p>
+
+<p>Format: <code class="language-plaintext highlighter-rouge">del n#ID</code> or <code class="language-plaintext highlighter-rouge">del e#ID</code></p>
+
+<p>Example:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">del n#1</code>: Deletes the node with id 1.</li>
+  <li><code class="language-plaintext highlighter-rouge">del e#3</code>: Deletes the edge with id 3.</li>
+</ul>
+
+<h3 id="begincontinue-a-simulation-trace-trace">Begin/Continue a simulation trace: <code class="language-plaintext highlighter-rouge">trace</code></h3>
+<p>If there is currently an ongoing simulation trace, progress to a given node if it is accessible. Else begins a simulation trace on the given node.</p>
+
+<p>Format: <code class="language-plaintext highlighter-rouge">trace n#ID</code></p>
+
+<p>Example:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">trace n#3</code> when a simulation trace is currently not in progress: Begin a simulation trace on the node with ID 3.</li>
+  <li><code class="language-plaintext highlighter-rouge">trace n#3</code> when a simulation trace is in progress, and the node with ID 3 is accessible to the current node: Progress to the node with ID 3.</li>
+  <li><code class="language-plaintext highlighter-rouge">trace n#3</code> when a simulation trace is in progress, however the node with ID 3 is currently inaccessible to the current node: An error message will be displayed as this is not a valid command under the current circumstances.</li>
+</ul>
+
+<h3 id="end-the-current-simulation-trace-trace-end">End the current simulation trace: <code class="language-plaintext highlighter-rouge">trace end</code></h3>
+<p>Ends the current simulation trace, if any, allowing the user to begin a new simulation trace on a separate node.</p>
+
+<box type="warning" seamless="">
+
+For more detailed information, consult the User Guide.
+
+</box>
+
+<p>Development information here.</p>
+
+<box type="warning" seamless="">
+
+For more detailed information, consult the Developer Guide.
+
+</box>
+
+
+  </div>
+
+</article>
+      </div>
+    </main>
+
+  </body>
+
+</html>

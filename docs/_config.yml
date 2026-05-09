@@ -1,6 +1,8 @@
 title: "Architecture Tracer"
 theme: minima
 
+baseurl: "/architecture-tracer"
+
 header_pages:
   - index.md
   - user-guide.md
@@ -13,10 +15,7 @@ github_icon: "images/github-icon.png"
 
 plugins:
   - jemoji
-
-exclude:
-  - app/
-  - Gemfile
+  - jekyll-feed
 
 keep_files:
   - app
