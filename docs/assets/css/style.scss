@@ -6,6 +6,10 @@
   "minima/skins/{{ site.minima.skin | default: 'classic' }}",
   "minima/initialize";
 
+.site-header {
+border-top: none;
+}
+
 .icon {
     height: 21px;
     width: 21px
