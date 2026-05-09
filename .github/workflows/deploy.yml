@@ -35,11 +35,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build React app into docs/app
-        run: npx vite build --outDir docs/app
-        env:
-          VITE_BASE_URL: /${{ github.event.repository.name }}/app/
-
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
@@ -56,14 +51,10 @@ jobs:
         env:
           JEKYLL_ENV: production
 
-      - name: Debug site output
-        run: |
-          echo "==> Contents of docs/_site/:"
-          ls -la docs/_site/
-          echo "==> Contents of docs/_site/app/:"
-          ls -la docs/_site/app/ || echo "app/ folder missing from _site"
-          echo "==> Head of docs/_site/app/index.html:"
-          head -20 docs/_site/app/index.html || echo "index.html missing"
+      - name: Build ReactFlow app into docs/app
+        run: npx vite build --outDir docs/app
+        env:
+          VITE_BASE_URL: /${{ github.event.repository.name }}/app/
 
       - name: Upload page artifact
         uses: actions/upload-pages-artifact@v3
@@ -73,5 +64,18 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Debug site output
+        run: |
+          echo "==> Contents of docs/_site/:"
+          ls -la docs/_site/
+          echo "==> Contents of docs/_site/app/:"
+          ls -la docs/_site/app/ || echo "app/ folder missing from _site"
+          echo "==> Head of docs/_site/app/index.html:"
+          head -20 docs/_site/app/index.html || echo "index.html missing"
+          echo "==> docs/_site/app contents:"
+          ls -la docs/_site/app/ || echo "WARNING: app/ missing from _site"
+          echo "==> index.html asset paths:"
+          head -30 docs/_site/app/index.html || echo "WARNING: app/index.html missing"
 
       
