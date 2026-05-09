@@ -1,0 +1,15 @@
+title: "AB-3"
+theme: minima
+
+header_pages:
+  - index.md
+  - user-guide.md
+  - developer-guide.md
+
+markdown: kramdown
+
+repository: "deltaminor/architecture-tracer"
+github_icon: "images/github-icon.png"
+
+plugins:
+  - jemoji

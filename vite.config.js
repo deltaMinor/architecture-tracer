@@ -14,7 +14,10 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
-      reportsDirectory: './coverage'
+      reportsDirectory: './coverage',
+      all: true,                      // ← include files with no tests too
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.d.ts', 'src/main.tsx']
     }
   },
 })
