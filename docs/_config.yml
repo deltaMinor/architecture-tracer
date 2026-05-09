@@ -5,9 +5,10 @@ baseurl: "/architecture-tracer"
 
 minima:
   skin: dark
-  nav_pages:
-    - user-guide.md
-    - developer-guide.md
+
+header_pages:
+  - user-guide.md
+  - developer-guide.md
 
 markdown: kramdown
 
