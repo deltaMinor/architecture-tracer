@@ -3,9 +3,11 @@ theme: minima
 
 baseurl: "/architecture-tracer"
 
-header_pages:
-  - user-guide.md
-  - developer-guide.md
+minima:
+  skin: dark
+  nav_pages:
+    - user-guide.md
+    - developer-guide.md
 
 markdown: kramdown
 
