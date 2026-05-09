@@ -21,13 +21,12 @@
           {%- for path in page_paths -%}
             {%- assign my_page = site.pages | where: "path", path | first -%}
             {%- if my_page.title -%}
-            <a class="page-link" href="{{ my_page.url | relative_url }}">{{ my_page.title | escape }}</a>
+            <a class="nav-item" href="{{ my_page.url | relative_url }}">{{ my_page.title | escape }}</a>
             {%- endif -%}
           {%- endfor -%}
           {%- if site.repository -%}
-          <a class="page-link no-hover" href="https://github.com/{{site.repository}}">
-            <img src="{{site.github_icon | relative_url}}" class="icon" alt="View on GitHub">
-          </a>
+          <a class="nav-item no-hover" href="https://github.com/{{site.repository}}">
+            <img src="{{ "/" | append: site.github_icon | relative_url }}" class="icon" alt="View on GitHub">          </a>
           {%- endif -%}
         </div>
       </nav>
