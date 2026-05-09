@@ -4,7 +4,6 @@ theme: minima
 baseurl: "/architecture-tracer"
 
 header_pages:
-  - index.md
   - user-guide.md
   - developer-guide.md
 
