@@ -13,7 +13,7 @@ export default defineConfig({
     environment: 'jsdom',
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'lcov'],   // lcov generates the lcov.info file
+      reporter: ['text', 'lcov'],
       reportsDirectory: './coverage'
     }
   },

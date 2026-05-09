@@ -33,7 +33,7 @@ jobs:
         run: npm run lint
 
       - name: Run unit tests
-        run: npm test -- --coverage --watchAll=false
+        run: npm test -- --coverage --run
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@v4
