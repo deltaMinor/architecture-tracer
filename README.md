@@ -1,3 +1,5 @@
+[![CI Status](https://github.com/deltaMinor/architecture-tracer/actions/workflows/test.yml/badge.svg)](https://github.com/deltaMinor/architecture-tracer/actions/workflows/gradle.yml)
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
