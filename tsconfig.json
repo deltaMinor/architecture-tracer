@@ -2,6 +2,8 @@
   "compilerOptions": {
     "types": ["vitest/globals"],
     "moduleResolution": "bundler",
-    "resolvePackageJsonImports": true
+    "resolvePackageJsonImports": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
   }
 }

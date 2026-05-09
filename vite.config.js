@@ -11,5 +11,10 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/tests/setup.ts',
     environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],   // lcov generates the lcov.info file
+      reportsDirectory: './coverage'
+    }
   },
 })
