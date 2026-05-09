@@ -20,7 +20,6 @@ plugins:
 exclude:
   - app/
   - Gemfile
-  - Gemfile.lock
 
 keep_files:
   - app

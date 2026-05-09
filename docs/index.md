@@ -8,7 +8,7 @@ Architecture Tracer is a web-based application which allows you to construct sys
 You can try out Architecture Tracer directly below, or use it on your local machine after installing it by following the installation guide below.
 
 <iframe
-src="./app/"
+src="/architecture-tracer/app/"
 title="Architecture Tracer App"
 width="100%"
 height="650px" 
