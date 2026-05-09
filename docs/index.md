@@ -3,11 +3,17 @@ layout: page
 title: Architecture Tracer
 ---
 
-# Architecture Tracer
 Architecture Tracer is a web-based application which allows you to construct system architecture simulations and run simultation traces through them via a Command Line Interface(CLI).
 
 You can try out Architecture Tracer directly below, or use it on your local machine after installing it by following the installation guide below.
-<iframe src="./app/" title="Architecture Tracer App" width="100%" height="650px" style="border:1px solid #e0e0e0; border-radius:8px;"></iframe>
+
+<iframe
+src="./app/"
+title="Architecture Tracer App"
+width="100%"
+height="650px" 
+style="border:1px solid #e0e0e0; border-radius:8px;">
+</iframe>
 
 ## Installation guide
 1. Install Node.js from https://nodejs.org.
