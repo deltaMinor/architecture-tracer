@@ -13,3 +13,11 @@ github_icon: "images/github-icon.png"
 
 plugins:
   - jemoji
+
+exclude:
+  - app/
+  - Gemfile
+  - Gemfile.lock
+
+keep_files:
+  - app
