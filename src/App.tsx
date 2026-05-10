@@ -17,7 +17,7 @@ import {
 } from '@xyflow/react';
 import {
   CommandBox,
-} from "./components/ui/commandbox";
+} from "./components/ui/commandBox";
 import '@xyflow/react/dist/style.css';
 
 const initialNodes: Node[] = [

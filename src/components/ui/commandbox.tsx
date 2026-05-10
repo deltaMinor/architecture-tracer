@@ -1,39 +1,39 @@
 import { useCallback, useState } from "react";
 
 import {
-  BuiltInEdge,
   useReactFlow,
-  type Node,
 } from "@xyflow/react";
 
 import { Input } from "./input";
+
+import { Command } from "../command/command";
+import { parseCommand } from "../command/commandParser";
 
 export function CommandBox({
 }) {
     const [commandString, setCommandString] = useState<string>("");
     const [response, setResponse] = useState<string>("");
     const [responseStyle, setResponseStyle] = useState<string>("");
-    const { setNodes } = useReactFlow<Node, BuiltInEdge>();
+    const reactFlow = useReactFlow();
     const validResponseStyle : string = "#ffffff";
     const invalidResponseStyle : string = "#ff0000";
 
     const handleCommand = useCallback((commandString: string) => {
         setResponse(`Input received: ${commandString}`);
 
-        const match = commandString.match(/^add n\/(.+)$/);
-        if (match) {
-            const name = match[1].trim();
-            const newNode = {
-            id: `n${Date.now()}`,
-            position: { x: Math.random() * 300, y: Math.random() * 300 },
-            data: { label: name },
-            };
-            setNodes((prev) => [...prev, newNode]);
+        try {
+            var newCommand: Command = parseCommand(commandString);
+            setResponse(newCommand.execute(reactFlow));
             setResponseStyle(validResponseStyle);
-        } else {
+        } catch (error) {
+            let errorMessage = "Invalid command.";
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            setResponse(errorMessage);
             setResponseStyle(invalidResponseStyle);
         }
-    }, [setNodes]);
+    }, []);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
