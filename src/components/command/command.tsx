@@ -27,7 +27,7 @@ class AddNodeCommand extends Command {
         var newId = 1;
         var position = {x: 0, y: 0};
         for (var node of reactFlow.getNodes()) {
-            if(node.id == newId.toString()) {
+            if(node.id == "n#" + newId.toString()) {
                 newId += 1;
             }
             position.x += node.position.x;
@@ -35,12 +35,13 @@ class AddNodeCommand extends Command {
         }
         var nodeCount = reactFlow.getNodes().length;
         const newNode = {
-            id: newId.toString(),
+            id: "n#" + newId.toString(),
+            type: 'customNode',
             position: { x: position.x/nodeCount, y: position.y/nodeCount },
             data: { label: this.newNodeLabel },
         };
         reactFlow.setNodes((prev) => [...prev, newNode]);
-        return `Node ${this.newNodeLabel} added(id: n#s${newId}).`;
+        return `Node ${this.newNodeLabel} added(id: ${newNode.id}).`;
     }
 }
 

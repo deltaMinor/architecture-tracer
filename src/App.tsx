@@ -18,14 +18,17 @@ import {
 import {
   CommandBox,
 } from "./components/ui/commandBox";
+import CustomNode from "./components/ui/customNode";
 import '@xyflow/react/dist/style.css';
 
+const nodeTypes = { customNode: CustomNode };
+
 const initialNodes: Node[] = [
-  { id: '1', data: { label: 'Node 1' }, position: { x: 5, y: 5 } },
-  { id: '2', data: { label: 'Node 2' }, position: { x: 5, y: 100 } },
+  { id: 'n#1', type: 'customNode', data: { label: 'Node 1', sourceCount: 1}, position: { x: 5, y: 5 } },
+  { id: 'n#2', type: 'customNode', data: { label: 'Node 2', targetCount: 1 }, position: { x: 5, y: 100 } },
 ];
  
-const initialEdges: Edge[] = [{ id: 'e1-2', source: '1', target: '2' }];
+const initialEdges: Edge[] = [{ id: 'e#1', source: 'n#1', target: 'n#2' }];
  
 const fitViewOptions: FitViewOptions = {
   padding: 0.2,
@@ -60,6 +63,7 @@ export default function App() {
     <ReactFlow
       nodes={nodes}
       edges={edges}
+      nodeTypes={nodeTypes}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}

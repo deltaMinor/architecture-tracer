@@ -7,7 +7,7 @@ import {
 } from "./validationParser"
 
 function parseCommand (commandString: string) {
-    var tokens = commandString.split(" ", 2);
+    var tokens = commandString.split(" ");
     switch(tokens[0]) {
         case "add": return parseAddCommand(tokens);
         default: throw Error("Invalid command.");
@@ -19,7 +19,7 @@ function parseAddCommand (tokens: string[]) {
         throw Error("Insufficient parameters for add command.");
     }
     if(isValidNodeLabel(tokens[1])) {
-        return new AddNodeCommand(tokens[1]);
+        return new AddNodeCommand(tokens.slice(1).join(" ").substring(2));
     }
     throw Error("Parameter unclear for add command.");
 }

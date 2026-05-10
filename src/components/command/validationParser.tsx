@@ -1,17 +1,12 @@
 function isValidNodeLabel(label: string) {
-    return label.startsWith("n/") && !label.includes(" ");
+    return label.startsWith("n/");
 }
 
-function isValidNodeId(label: string) {
-    return label.startsWith("n#") && !label.includes(" ");
-}
-
-function isValidEdgeId(label: string) {
-    return label.startsWith("e#") && !label.includes(" ");
+function isValidNodeId(id: string) {
+    return id.startsWith("n#") && !isNaN(+id.substring(2));
 }
 
 export {
     isValidNodeLabel,
-    isValidNodeId,
-    isValidEdgeId
+    isValidNodeId
 }
