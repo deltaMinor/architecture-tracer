@@ -70,7 +70,7 @@ export default function App() {
     >
       <Background />
         <Panel
-          className="flex gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
+          className="flex w-full gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
           position="bottom-center"
         >
           <CommandBox />

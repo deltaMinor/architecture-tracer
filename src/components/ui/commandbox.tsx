@@ -6,17 +6,20 @@ import {
   type Node,
 } from "@xyflow/react";
 
-import {
-  Command,
-  CommandInput,
-} from "./command";
+import { Input } from "./input";
 
 export function CommandBox({
 }) {
     const [commandString, setCommandString] = useState<string>("");
+    const [response, setResponse] = useState<string>("");
+    const [responseStyle, setResponseStyle] = useState<string>("");
     const { setNodes } = useReactFlow<Node, BuiltInEdge>();
+    const validResponseStyle : string = "#ffffff";
+    const invalidResponseStyle : string = "#ff0000";
 
     const handleCommand = useCallback((commandString: string) => {
+        setResponse(`Input received: ${commandString}`);
+
         const match = commandString.match(/^add n\/(.+)$/);
         if (match) {
             const name = match[1].trim();
@@ -26,6 +29,9 @@ export function CommandBox({
             data: { label: name },
             };
             setNodes((prev) => [...prev, newNode]);
+            setResponseStyle(validResponseStyle);
+        } else {
+            setResponseStyle(invalidResponseStyle);
         }
     }, [setNodes]);
 
@@ -37,16 +43,19 @@ export function CommandBox({
     };
 
     return (
-        <Command
-        shouldFilter={false}
-        className="rounded-lg border shadow-md md:min-w-[600px]"
-        >
-            <CommandInput
-            placeholder="Enter a command"
-            value={commandString}
-            onValueChange={setCommandString}
-            onKeyDown={handleKeyDown}
-            />
-        </Command>
+        <div className="flex flex-col w-full gap-2">
+            <Input
+            className = "text-white w-full bg-[#16171d]"
+            placeholder = "Enter command..."
+            value = {commandString}
+            type = "text"
+            onChange = {(e) => setCommandString(e.target.value)}
+            onKeyDown = {handleKeyDown} />
+            <div 
+            className = "text-left w-full min-h-[60px] rounded-md border border-input bg-background px-2 py-1 text-sm bg-[#16171d]"
+            style={{ color: responseStyle }}>
+                {response}
+            </div>
+        </div>
     );
 }
