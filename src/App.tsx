@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import {
   ReactFlow,
+  useReactFlow,
   addEdge,
   applyNodeChanges,
   applyEdgeChanges,
@@ -16,8 +17,19 @@ import {
   type DefaultEdgeOptions,
 } from '@xyflow/react';
 import {
+  Command
+} from "./components/command/command"
+import {
+  parseCommand
+} from "./components/command/commandParser"
+import {
   CommandBox,
 } from "./components/ui/commandBox";
+import {
+  ResponseBox,
+  VALID_INPUT,
+  INVALID_INPUT
+} from "./components/ui/responseBox";
 import CustomNode from "./components/ui/customNode";
 import '@xyflow/react/dist/style.css';
 
@@ -41,7 +53,43 @@ const defaultEdgeOptions: DefaultEdgeOptions = {
 const onNodeDrag: OnNodeDrag = (_, node) => {
   console.log('drag event', node.data);
 };
- 
+
+/* Inner component of App where useReactFlow() can be called */
+function AppInner() {
+  const [responseText, setResponseText] = useState<string>("");
+  const [responseStyle, setResponseStyle] = useState<string>("");
+
+  const reactFlow = useReactFlow();
+
+  const handleCommand = useCallback((commandString: string) => {
+      try {
+          var newCommand: Command = parseCommand(commandString);
+          setResponseText(newCommand.execute(reactFlow));
+          setResponseStyle(VALID_INPUT);
+      } catch (error) {
+          let errorMessage = "Invalid command.";
+          if (error instanceof Error) {
+              errorMessage = error.message;
+          }
+          setResponseText(errorMessage);
+          setResponseStyle(INVALID_INPUT);
+      }
+  }, []);
+
+  return (
+      <Panel
+        className="flex w-full gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
+        position="bottom-center"
+      >
+        <div className="flex flex-col w-full gap-2">
+          <CommandBox handleInput = {handleCommand}/>
+          <ResponseBox text = {responseText} style = {responseStyle} />
+        </div>
+      </Panel>
+  );
+
+}
+
 export default function App() {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
@@ -73,12 +121,7 @@ export default function App() {
       defaultEdgeOptions={defaultEdgeOptions}
     >
       <Background />
-        <Panel
-          className="flex w-full gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
-          position="bottom-center"
-        >
-          <CommandBox />
-        </Panel>
+      <AppInner />
     </ReactFlow>
   );
 }
