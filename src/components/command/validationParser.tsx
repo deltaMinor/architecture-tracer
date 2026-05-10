@@ -6,7 +6,12 @@ function isValidNodeId(id: string) {
     return id.startsWith("n#") && !isNaN(+id.substring(2));
 }
 
+function isValidEdgeId(id: string) {
+    return id.startsWith("e#") && !isNaN(+id.substring(2));
+}
+
 export {
     isValidNodeLabel,
-    isValidNodeId
+    isValidNodeId,
+    isValidEdgeId
 }

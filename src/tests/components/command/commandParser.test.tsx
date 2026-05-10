@@ -20,7 +20,7 @@ describe("parseCommand", () => {
  
   it("throws when the label is not a valid node label", () => {
     expect(() => parseCommand("add foo")).toThrow(
-      "Parameter unclear for add command."
+      "Invalid parameter for add command: foo"
     );
   });
  

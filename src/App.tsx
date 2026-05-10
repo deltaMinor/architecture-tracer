@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 import {
   ReactFlow,
   useReactFlow,
@@ -15,43 +15,48 @@ import {
   type OnEdgesChange,
   type OnNodeDrag,
   type DefaultEdgeOptions,
-} from '@xyflow/react';
-import {
-  Command
-} from "./components/command/command"
-import {
-  parseCommand
-} from "./components/command/commandParser"
-import {
-  CommandBox,
-} from "./components/ui/commandBox";
+} from "@xyflow/react";
+import { Command } from "./components/command/command";
+import { parseCommand } from "./components/command/commandParser";
+import { CommandBox } from "./components/ui/commandBox";
 import {
   ResponseBox,
   VALID_INPUT,
-  INVALID_INPUT
+  INVALID_INPUT,
 } from "./components/ui/responseBox";
 import CustomNode from "./components/ui/customNode";
-import '@xyflow/react/dist/style.css';
+import "@xyflow/react/dist/style.css";
+import { ArchitectureState } from "#components/architectureState";
 
 const nodeTypes = { customNode: CustomNode };
 
 const initialNodes: Node[] = [
-  { id: 'n#1', type: 'customNode', data: { label: 'Node 1', sourceCount: 1}, position: { x: 5, y: 5 } },
-  { id: 'n#2', type: 'customNode', data: { label: 'Node 2', targetCount: 1 }, position: { x: 5, y: 100 } },
+  {
+    id: "n#1",
+    type: "customNode",
+    data: { label: "Node 1", sourceCount: 1, isHighlighted: true },
+    position: { x: 5, y: 5 },
+  },
+  {
+    id: "n#2",
+    type: "customNode",
+    data: { label: "Node 2", targetCount: 1 },
+    position: { x: 5, y: 100 },
+  },
 ];
- 
-const initialEdges: Edge[] = [{ id: 'e#1', source: 'n#1', target: 'n#2' }];
- 
+
+const initialEdges: Edge[] = [{ id: "e#1", source: "n#1", target: "n#2" }];
+
 const fitViewOptions: FitViewOptions = {
   padding: 0.2,
 };
- 
+
 const defaultEdgeOptions: DefaultEdgeOptions = {
   animated: true,
 };
- 
+
 const onNodeDrag: OnNodeDrag = (_, node) => {
-  console.log('drag event', node.data);
+  console.log("drag event", node.data);
 };
 
 /* Inner component of App where useReactFlow() can be called */
@@ -60,40 +65,40 @@ function AppInner() {
   const [responseStyle, setResponseStyle] = useState<string>("");
 
   const reactFlow = useReactFlow();
+  const architectureState = new ArchitectureState(reactFlow);
 
   const handleCommand = useCallback((commandString: string) => {
-      try {
-          var newCommand: Command = parseCommand(commandString);
-          setResponseText(newCommand.execute(reactFlow));
-          setResponseStyle(VALID_INPUT);
-      } catch (error) {
-          let errorMessage = "Invalid command.";
-          if (error instanceof Error) {
-              errorMessage = error.message;
-          }
-          setResponseText(errorMessage);
-          setResponseStyle(INVALID_INPUT);
+    try {
+      var newCommand: Command = parseCommand(commandString);
+      setResponseText(newCommand.execute(architectureState));
+      setResponseStyle(VALID_INPUT);
+    } catch (error) {
+      let errorMessage = "Invalid command.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
       }
+      setResponseText(errorMessage);
+      setResponseStyle(INVALID_INPUT);
+    }
   }, []);
 
   return (
-      <Panel
-        className="flex w-full gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
-        position="bottom-center"
-      >
-        <div className="flex flex-col w-full gap-2">
-          <CommandBox handleInput = {handleCommand}/>
-          <ResponseBox text = {responseText} style = {responseStyle} />
-        </div>
-      </Panel>
+    <Panel
+      className="flex w-full gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
+      position="bottom-center"
+    >
+      <div className="flex flex-col w-full gap-2">
+        <CommandBox handleInput={handleCommand} />
+        <ResponseBox text={responseText} style={responseStyle} />
+      </div>
+    </Panel>
   );
-
 }
 
 export default function App() {
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>(initialEdges);
- 
+
   const onNodesChange: OnNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes],
@@ -106,7 +111,7 @@ export default function App() {
     (connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges],
   );
- 
+
   return (
     <ReactFlow
       nodes={nodes}
