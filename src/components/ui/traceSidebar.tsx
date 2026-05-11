@@ -37,7 +37,6 @@ export function TraceSidebar({
             borderBottom: "1px solid #2a2b38",
             display: "flex",
             alignItems: "center",
-            gap: 8,
           }}
         >
           <span
@@ -53,7 +52,6 @@ export function TraceSidebar({
           </span>
         </div>
 
-        {/* Entries */}
         <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
           <div
             style={{
@@ -87,11 +85,14 @@ export function TraceSidebar({
               <div
                 key={i}
                 style={{
-                  padding: "8px 14px",
-                  borderBottom: "1px solid #1e1f2b",
+                  borderRadius: 8,
+                  background: "#1e1f2b",
+                  border: "1px solid #000",
+                  margin: "6px 12px",
+                  padding: "10px 8px",
                   display: "flex",
                   flexDirection: "column",
-                  gap: 2,
+                  lineHeight: 1.25,
                 }}
               >
                 <span
@@ -109,8 +110,8 @@ export function TraceSidebar({
                 </span>
                 <span
                   style={{
-                    color: "#555",
-                    fontSize: 10,
+                    color: "#999",
+                    fontSize: 12,
                   }}
                 >
                   {step.description}
@@ -141,7 +142,6 @@ export function TraceSidebar({
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          gap: 4,
           transition: "left 0.25s ease",
           boxShadow: "-2px 0 8px rgba(0,0,0,0.3)",
         }}
