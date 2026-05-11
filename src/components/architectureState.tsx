@@ -1,6 +1,7 @@
-import { ReactFlowInstance } from "@xyflow/react";
+import { useState } from "react";
+import { Node, ReactFlowInstance } from "@xyflow/react";
 
-type traceStep = {
+export type traceStep = {
   nodeId: string;
   description: string;
 };
@@ -8,14 +9,28 @@ type traceStep = {
 export class ArchitectureState {
   private reactFlow: ReactFlowInstance;
   private steps: traceStep[];
+  private setSteps: React.Dispatch<React.SetStateAction<traceStep[]>>;
   private currentStep: number;
   private currentlyTracing: boolean;
+  private setCurrentlyTracing: React.Dispatch<React.SetStateAction<boolean>>;
 
-  constructor(reactFlow: ReactFlowInstance) {
+  constructor(
+    reactFlow: ReactFlowInstance,
+    steps: traceStep[],
+    setSteps: React.Dispatch<React.SetStateAction<traceStep[]>>,
+    currentlyTracing: boolean,
+    setCurrentlyTracing: React.Dispatch<React.SetStateAction<boolean>>,
+  ) {
     this.reactFlow = reactFlow;
-    this.steps = [];
-    this.currentStep = -1;
-    this.currentlyTracing = false;
+    this.steps = steps;
+    this.setSteps = setSteps;
+    this.currentStep = steps.length - 1;
+    this.currentlyTracing = currentlyTracing;
+    this.setCurrentlyTracing = setCurrentlyTracing;
+  }
+
+  getTraceSteps() {
+    return this.steps;
   }
 
   isCurrentlyTracing() {
@@ -40,6 +55,9 @@ export class ArchitectureState {
   }
 
   addNode(label: string) {
+    if (this.currentlyTracing) {
+      throw Error("Unable to add node during simulation trace.");
+    }
     var newId = 1;
     var position = { x: 0, y: 0 };
     for (var node of this.reactFlow.getNodes()) {
@@ -60,24 +78,34 @@ export class ArchitectureState {
     return newNode;
   }
 
+  replaceNodeWithId(id: string, replacement: Node) {
+    this.reactFlow.setNodes((nds) =>
+      nds.map((node) => {
+        if (node.id == id) {
+          return replacement;
+        }
+        return node;
+      }),
+    );
+  }
+
   setHighlightOfNodeWithId(id: string, toHighlight: boolean) {
     const toReplaceNode = this.getNodeWithId(id);
     if (toReplaceNode == undefined) {
       throw Error(`Node with id ${id} does not exist.`);
     }
-    const index = this.reactFlow.getNodes().indexOf(toReplaceNode, 0);
     const newNode = {
       id: toReplaceNode.id,
       type: "customNode",
       position: { x: toReplaceNode.position.x, y: toReplaceNode.position.y },
       data: {
-        label: "toReplaceNode.data.label",
+        label: toReplaceNode.data.label,
         sourceCount: toReplaceNode.data.sourceCount,
         targetCount: toReplaceNode.data.targetCount,
         isHighlighted: toHighlight,
       },
     };
-    this.reactFlow.getNodes()[index] = newNode;
+    this.replaceNodeWithId(id, newNode);
   }
 
   hasEdgeWithId(id: string) {
@@ -113,6 +141,7 @@ export class ArchitectureState {
   beginTrace() {
     this.clearSteps();
     this.currentlyTracing = true;
+    this.setCurrentlyTracing(true);
   }
 
   addStep(nodeId: string, description: string) {
@@ -137,18 +166,28 @@ export class ArchitectureState {
       }
       this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, false);
     }
-    this.steps.push({ nodeId, description });
+    this.steps = [...this.steps, { nodeId, description }];
+    this.setSteps(this.steps);
     this.currentStep += 1;
     this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, true);
   }
 
   clearSteps() {
     this.steps = [];
+    this.setSteps([]);
     this.currentStep = -1;
   }
 
   endTrace() {
     this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, false);
     this.currentlyTracing = false;
+    this.setCurrentlyTracing(false);
   }
+}
+
+export function nodeToString(node: Node | undefined) {
+  if (node == undefined) {
+    return "";
+  }
+  return `Node ${node.data.label}(id: ${node.id})`;
 }

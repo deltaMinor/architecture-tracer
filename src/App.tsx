@@ -24,9 +24,10 @@ import {
   VALID_INPUT,
   INVALID_INPUT,
 } from "./components/ui/responseBox";
+import { TraceSidebar } from "#components/ui/traceSidebar";
 import CustomNode from "./components/ui/customNode";
 import "@xyflow/react/dist/style.css";
-import { ArchitectureState } from "#components/architectureState";
+import { traceStep, ArchitectureState } from "#components/architectureState";
 
 const nodeTypes = { customNode: CustomNode };
 
@@ -64,8 +65,17 @@ function AppInner() {
   const [responseText, setResponseText] = useState<string>("");
   const [responseStyle, setResponseStyle] = useState<string>("");
 
+  const [traceSteps, setTraceSteps] = useState<traceStep[]>([]);
+  const [currentlyTracing, setCurrentlyTracing] = useState<boolean>(false);
+
   const reactFlow = useReactFlow();
-  const architectureState = new ArchitectureState(reactFlow);
+  const architectureState = new ArchitectureState(
+    reactFlow,
+    traceSteps,
+    setTraceSteps,
+    currentlyTracing,
+    setCurrentlyTracing,
+  );
 
   const handleCommand = useCallback((commandString: string) => {
     try {
@@ -83,15 +93,18 @@ function AppInner() {
   }, []);
 
   return (
-    <Panel
-      className="flex w-full gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
-      position="bottom-center"
-    >
-      <div className="flex flex-col w-full gap-2">
-        <CommandBox handleInput={handleCommand} />
-        <ResponseBox text={responseText} style={responseStyle} />
-      </div>
-    </Panel>
+    <>
+      <Panel
+        className="flex w-full gap-1 rounded-md bg-primary-foreground p-1 text-foreground"
+        position="bottom-center"
+      >
+        <div className="flex flex-col w-full gap-2">
+          <CommandBox handleInput={handleCommand} />
+          <ResponseBox text={responseText} style={responseStyle} />
+        </div>
+      </Panel>
+      <TraceSidebar architectureState={architectureState} />
+    </>
   );
 }
 

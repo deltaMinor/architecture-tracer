@@ -1,6 +1,6 @@
 import { BuiltInEdge, useReactFlow, type Node } from "@xyflow/react";
 
-import { ArchitectureState } from "#components/architectureState";
+import { ArchitectureState, nodeToString } from "#components/architectureState";
 
 abstract class Command {
   abstract execute(architectureState: ArchitectureState): string;
@@ -22,7 +22,7 @@ class AddNodeCommand extends Command {
 
   execute(architectureState: ArchitectureState) {
     const newNode = architectureState.addNode(this.newNodeLabel);
-    return `Node ${this.newNodeLabel} added(id: ${newNode.id}).`;
+    return nodeToString(newNode) + " added.";
   }
 }
 
@@ -37,11 +37,15 @@ class TraceCommand extends Command {
   }
 
   execute(architectureState: ArchitectureState) {
+    const tracedNode = architectureState.getNodeWithId(this.nodeId);
+    if(!architectureState.hasNodeWithId(this.nodeId) || tracedNode == undefined) {
+      throw Error(`Node with id ${this.nodeId} does not exist.`);
+    }
     const newTrace = !architectureState.isCurrentlyTracing();
     architectureState.addStep(this.nodeId, this.description);
     return newTrace
-      ? `Beginning new simulation trace at Node ${architectureState.getNodeWithId(this.nodeId)?.data.label}(id: ${this.nodeId}): ${this.description}`
-      : `Moved to at Node ${architectureState.getNodeWithId(this.nodeId)?.data.label}(id: ${this.nodeId}): ${this.description}`;
+      ? `Beginning new simulation trace at ${nodeToString(tracedNode)}: ${this.description}`
+      : `Moved to nodeToString(tracedNode): ${this.description}`;
   }
 }
 
