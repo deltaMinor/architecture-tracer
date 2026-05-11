@@ -63,7 +63,7 @@ export class ArchitectureState {
   }
 
   removeAllNodes() {
-    for(var node of this.reactFlow.getNodes()) {
+    for (var node of this.reactFlow.getNodes()) {
       this.removeNodeWithId(node.id);
     }
   }
@@ -201,9 +201,9 @@ export class ArchitectureState {
       id: "e#" + newId.toString(),
       source: source,
       target: target,
-      type: "customEdge"
+      type: "customEdge",
     };
-    this.reactFlow.setEdges((prev) => addEdge(newEdge, prev));
+    this.reactFlow.setEdges((prev) => [...prev, newEdge]);
     this.incrementSourceCountOfNodeWithId(source, 1);
     this.incrementTargetCountOfNodeWithId(target, 1);
     return newEdge;
