@@ -83,10 +83,14 @@ export class ArchitectureState {
       position.y += node.position.y;
     }
     var nodeCount = this.reactFlow.getNodes().length;
+    if (nodeCount > 0) {
+      position.x = position.x / nodeCount;
+      position.y = position.y / nodeCount;
+    }
     const newNode = {
       id: "n#" + newId.toString(),
       type: "customNode",
-      position: { x: position.x / nodeCount, y: position.y / nodeCount },
+      position: position,
       data: { label: label },
     };
     this.reactFlow.setNodes((prev) => [...prev, newNode]);
