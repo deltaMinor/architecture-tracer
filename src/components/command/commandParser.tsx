@@ -3,6 +3,7 @@ import {
   AddEdgeCommand,
   DeleteNodeCommand,
   DeleteEdgeCommand,
+  ClearCommand,
   TraceCommand,
   EndTraceCommand,
 } from "./command";
@@ -22,6 +23,8 @@ function parseCommand(commandString: string) {
       return parseAddCommand(tokens);
     case "delete":
       return parseDeleteCommand(tokens);
+    case "clear":
+      return parseClearCommand(tokens);
     case "trace":
       return parseTraceCommand(tokens);
     default:
@@ -60,6 +63,14 @@ function parseDeleteCommand(tokens: string[]) {
     return new DeleteNodeCommand(remainder);
   }
   throw Error(`Invalid parameter for delete command: ${remainder}`);
+}
+
+function parseClearCommand(tokens: string[]) {
+  if (tokens.length == 1) {
+    return new ClearCommand();
+  }
+  const remainder = tokens.slice(1).join(" ");
+  throw Error(`Invalid parameter for clear command: ${remainder}`);
 }
 
 function parseTraceCommand(tokens: string[]) {

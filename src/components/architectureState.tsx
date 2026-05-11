@@ -40,6 +40,10 @@ export class ArchitectureState {
     return this.reactFlow.getNodes().filter((node) => node.id == id).length > 0;
   }
 
+  getNodeCount() {
+    return this.reactFlow.getNodes().length;
+  }
+
   getNodeWithId(id: string) {
     return this.reactFlow.getNodes().find((node) => node.id == id);
   }
@@ -56,6 +60,12 @@ export class ArchitectureState {
       this.removeEdgeWithId(edge.id);
     }
     this.reactFlow.setNodes((prev) => prev.filter((node) => node.id != id));
+  }
+
+  removeAllNodes() {
+    for(var node of this.reactFlow.getNodes()) {
+      this.removeNodeWithId(node.id);
+    }
   }
 
   addNode(label: string) {
@@ -191,6 +201,7 @@ export class ArchitectureState {
       id: "e#" + newId.toString(),
       source: source,
       target: target,
+      type: "customEdge"
     };
     this.reactFlow.setEdges((prev) => addEdge(newEdge, prev));
     this.incrementSourceCountOfNodeWithId(source, 1);

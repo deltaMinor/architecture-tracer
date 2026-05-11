@@ -93,6 +93,20 @@ class DeleteEdgeCommand extends Command {
   }
 }
 
+class ClearCommand extends Command {
+  constructor() {
+    super();
+  }
+
+  execute(architectureState: ArchitectureState) {
+    if (architectureState.getNodeCount() == 0) {
+      throw Error(`The architecture is already empty.`);
+    }
+    architectureState.removeAllNodes();
+    return "All nodes deleted.";
+  }
+}
+
 class TraceCommand extends Command {
   private nodeId: string;
   private description: string;
@@ -141,6 +155,7 @@ export {
   AddEdgeCommand,
   DeleteNodeCommand,
   DeleteEdgeCommand,
+  ClearCommand,
   TraceCommand,
   EndTraceCommand,
 };

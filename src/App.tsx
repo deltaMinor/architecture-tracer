@@ -26,10 +26,12 @@ import {
 } from "./components/ui/responseBox";
 import { TraceSidebar } from "#components/ui/traceSidebar";
 import CustomNode from "./components/ui/customNode";
+import CustomEdge from "./components/ui/customEdge";
 import "@xyflow/react/dist/style.css";
 import { traceStep, ArchitectureState } from "#components/architectureState";
 
 const nodeTypes = { customNode: CustomNode };
+const edgeTypes = { customEdge: CustomEdge };
 
 const initialNodes: Node[] = [
   {
@@ -46,7 +48,7 @@ const initialNodes: Node[] = [
   },
 ];
 
-const initialEdges: Edge[] = [{ id: "e#1", source: "n#1", target: "n#2" }];
+const initialEdges: Edge[] = [{ id: "e#1", source: "n#1", target: "n#2", type: "customEdge" }];
 
 const fitViewOptions: FitViewOptions = {
   padding: 0.2,
@@ -146,6 +148,7 @@ export default function App() {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}

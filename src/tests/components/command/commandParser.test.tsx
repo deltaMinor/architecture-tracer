@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { AddNodeCommand, AddEdgeCommand, DeleteNodeCommand, DeleteEdgeCommand, TraceCommand, EndTraceCommand } from "#components/command/command";
+import {
+  AddNodeCommand,
+  AddEdgeCommand,
+  DeleteNodeCommand,
+  DeleteEdgeCommand,
+  ClearCommand,
+  TraceCommand,
+  EndTraceCommand,
+} from "#components/command/command";
 import { parseCommand } from "../../../components/command/commandParser";
 
 describe("parseCommand", () => {
@@ -11,19 +19,19 @@ describe("parseCommand", () => {
     const cmd = parseCommand("add n/Server");
     expect(cmd).toBeInstanceOf(AddNodeCommand);
   });
- 
+
   it("throws error when the add command has no argument", () => {
     expect(() => parseCommand("add")).toThrow(
-      "Insufficient parameters for add command."
+      "Insufficient parameters for add command.",
     );
   });
- 
+
   it("throws error when the label is not a valid node label", () => {
     expect(() => parseCommand("add foo")).toThrow(
-      "Invalid parameter for add command: foo"
+      "Invalid parameter for add command: foo",
     );
   });
-  
+
   it("returns an AddEdgeCommand for a valid edge constructor", () => {
     const cmd = parseCommand("add e/n#1 n#2");
     expect(cmd).toBeInstanceOf(AddEdgeCommand);
@@ -44,10 +52,21 @@ describe("parseCommand", () => {
     const cmd = parseCommand("delete e#1");
     expect(cmd).toBeInstanceOf(DeleteEdgeCommand);
   });
- 
+
   it("throws error when the delete command has no argument", () => {
     expect(() => parseCommand("delete")).toThrow(
-      "Insufficient parameters for delete command."
+      "Insufficient parameters for delete command.",
+    );
+  });
+
+  it("returns an ClearCommand for a valid clear", () => {
+    const cmd = parseCommand("clear");
+    expect(cmd).toBeInstanceOf(ClearCommand);
+  });
+
+  it("throws error when the clear command has arguments", () => {
+    expect(() => parseCommand("clear all")).toThrow(
+      "Invalid parameter for clear command: all",
     );
   });
 
@@ -80,9 +99,8 @@ describe("parseCommand", () => {
     const cmd = parseCommand("trace end");
     expect(cmd).toBeInstanceOf(EndTraceCommand);
   });
- 
+
   it("throw error for a completely empty string", () => {
     expect(() => parseCommand("")).toThrow();
   });
 });
-; 
