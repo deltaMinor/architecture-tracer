@@ -156,7 +156,7 @@ describe("ArchitectureState edge methods:", () => {
   it("removeEdgeWithId throws when edge does not exist", () => {
     const state = mockState();
     expect(() => state.removeEdgeWithId("e#1")).toThrow(
-      "Node with id e#1 does not exist.",
+      "Edge with id e#1 does not exist.",
     );
   });
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { AddNodeCommand, AddEdgeCommand, TraceCommand, EndTraceCommand } from "#components/command/command";
+import { AddNodeCommand, AddEdgeCommand, DeleteNodeCommand, DeleteEdgeCommand, TraceCommand, EndTraceCommand } from "#components/command/command";
 import { parseCommand } from "../../../components/command/commandParser";
 
 describe("parseCommand", () => {
@@ -12,13 +12,13 @@ describe("parseCommand", () => {
     expect(cmd).toBeInstanceOf(AddNodeCommand);
   });
  
-  it("throws when the add command has no label argument", () => {
+  it("throws error when the add command has no argument", () => {
     expect(() => parseCommand("add")).toThrow(
       "Insufficient parameters for add command."
     );
   });
  
-  it("throws when the label is not a valid node label", () => {
+  it("throws error when the label is not a valid node label", () => {
     expect(() => parseCommand("add foo")).toThrow(
       "Invalid parameter for add command: foo"
     );
@@ -29,9 +29,25 @@ describe("parseCommand", () => {
     expect(cmd).toBeInstanceOf(AddEdgeCommand);
   });
 
-  it("throws for an invalid edge constructor format", () => {
+  it("throws error for an invalid edge constructor format", () => {
     expect(() => parseCommand("add e/foo")).toThrow(
       "Invalid parameter for add command: e/foo",
+    );
+  });
+
+  it("returns an DeleteNodeCommand for a valid delete command with node id", () => {
+    const cmd = parseCommand("delete n#1");
+    expect(cmd).toBeInstanceOf(DeleteNodeCommand);
+  });
+
+  it("returns an DeleteEdgeCommand for a valid delete command with edge id", () => {
+    const cmd = parseCommand("delete e#1");
+    expect(cmd).toBeInstanceOf(DeleteEdgeCommand);
+  });
+ 
+  it("throws error when the delete command has no argument", () => {
+    expect(() => parseCommand("delete")).toThrow(
+      "Insufficient parameters for delete command."
     );
   });
 
@@ -58,6 +74,11 @@ describe("parseCommand", () => {
   it("accepts multi-word descriptions", () => {
     const cmd = parseCommand("trace n#5 Attacker enters from the Internet.");
     expect(cmd).toBeInstanceOf(TraceCommand);
+  });
+
+  it("returns EndTraceCommand successfully", () => {
+    const cmd = parseCommand("trace end");
+    expect(cmd).toBeInstanceOf(EndTraceCommand);
   });
  
   it("throw error for a completely empty string", () => {

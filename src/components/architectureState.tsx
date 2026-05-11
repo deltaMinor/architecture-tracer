@@ -45,12 +45,17 @@ export class ArchitectureState {
   }
 
   removeNodeWithId(id: string) {
+    if (this.currentlyTracing) {
+      throw Error("Unable to delete node while simulation trace in progress.");
+    }
     const toRemoveNode = this.getNodeWithId(id);
     if (toRemoveNode == undefined) {
       throw Error(`Node with id ${id} does not exist.`);
     }
-    const index = this.reactFlow.getNodes().indexOf(toRemoveNode, 0);
-    this.reactFlow.getNodes().splice(index, 1);
+    for (var edge of this.getEdgesWithNodeId(id)) {
+      this.removeEdgeWithId(edge.id);
+    }
+    this.reactFlow.setNodes((prev) => prev.filter((node) => node.id != id));
   }
 
   addNode(label: string) {
@@ -155,12 +160,17 @@ export class ArchitectureState {
   }
 
   removeEdgeWithId(id: string) {
+    if (this.currentlyTracing) {
+      throw Error("Unable to delete edge while simulation trace in progress.");
+    }
     const toRemoveEdge = this.getEdgeWithId(id);
     if (toRemoveEdge == undefined) {
-      throw Error(`Node with id ${id} does not exist.`);
+      throw Error(`Edge with id ${id} does not exist.`);
     }
     const index = this.reactFlow.getEdges().indexOf(toRemoveEdge, 0);
-    this.reactFlow.getEdges().splice(index, 1);
+    this.incrementSourceCountOfNodeWithId(toRemoveEdge.source, -1);
+    this.incrementTargetCountOfNodeWithId(toRemoveEdge.target, -1);
+    this.reactFlow.setEdges((prev) => prev.filter((node) => node.id != id));
   }
 
   addEdge(source: string, target: string) {

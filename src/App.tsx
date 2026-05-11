@@ -133,6 +133,7 @@ export default function App() {
     (connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges],
   );
+  
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [traceSteps, setTraceSteps] = useState<traceStep[]>([]);
   const [currentlyTracing, setCurrentlyTracing] = useState<boolean>(false);

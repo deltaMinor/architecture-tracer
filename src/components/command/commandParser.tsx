@@ -1,11 +1,17 @@
 import {
   AddNodeCommand,
   AddEdgeCommand,
+  DeleteNodeCommand,
+  DeleteEdgeCommand,
   TraceCommand,
   EndTraceCommand,
 } from "./command";
 
-import { isValidNodeLabel, isValidNodeId } from "./validationParser";
+import {
+  isValidNodeLabel,
+  isValidNodeId,
+  isValidEdgeId,
+} from "./validationParser";
 
 const EDGE_CONSTRUCTOR_REGEX = /^e\/n#\d+ n#\d+$/;
 
@@ -14,6 +20,8 @@ function parseCommand(commandString: string) {
   switch (tokens[0]) {
     case "add":
       return parseAddCommand(tokens);
+    case "delete":
+      return parseDeleteCommand(tokens);
     case "trace":
       return parseTraceCommand(tokens);
     default:
@@ -38,6 +46,20 @@ function parseAddCommand(tokens: string[]) {
     return new AddEdgeCommand(ids[0], ids[1]);
   }
   throw Error(`Invalid parameter for add command: ${remainder}`);
+}
+
+function parseDeleteCommand(tokens: string[]) {
+  if (tokens.length < 2) {
+    throw Error("Insufficient parameters for delete command.");
+  }
+  const remainder = tokens.slice(1).join(" ");
+  if (isValidEdgeId(remainder)) {
+    return new DeleteEdgeCommand(remainder);
+  }
+  if (isValidNodeId(remainder)) {
+    return new DeleteNodeCommand(remainder);
+  }
+  throw Error(`Invalid parameter for delete command: ${remainder}`);
 }
 
 function parseTraceCommand(tokens: string[]) {

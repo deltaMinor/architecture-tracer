@@ -55,6 +55,44 @@ class AddEdgeCommand extends Command {
   }
 }
 
+class DeleteNodeCommand extends Command {
+  private nodeId: string;
+
+  constructor(nodeId: string) {
+    super();
+    this.nodeId = nodeId;
+  }
+
+  execute(architectureState: ArchitectureState) {
+    const toDeleteNode = architectureState.getNodeWithId(this.nodeId);
+    if (toDeleteNode == undefined) {
+      throw Error(`Node with id ${this.nodeId} does not exist.`);
+    }
+    const toDeleteNodeString = nodeToString(toDeleteNode);
+    architectureState.removeNodeWithId(this.nodeId);
+    return toDeleteNodeString + " deleted.";
+  }
+}
+
+class DeleteEdgeCommand extends Command {
+  private edgeId: string;
+
+  constructor(edgeId: string) {
+    super();
+    this.edgeId = edgeId;
+  }
+
+  execute(architectureState: ArchitectureState) {
+    const toDeleteEdge = architectureState.getEdgeWithId(this.edgeId);
+    if (toDeleteEdge == undefined) {
+      throw Error(`Edge with id ${this.edgeId} does not exist.`);
+    }
+    const toDeleteEdgeString = edgeToString(toDeleteEdge, architectureState);
+    architectureState.removeEdgeWithId(this.edgeId);
+    return toDeleteEdgeString + " deleted.";
+  }
+}
+
 class TraceCommand extends Command {
   private nodeId: string;
   private description: string;
@@ -101,6 +139,8 @@ export {
   Command,
   AddNodeCommand,
   AddEdgeCommand,
+  DeleteNodeCommand,
+  DeleteEdgeCommand,
   TraceCommand,
   EndTraceCommand,
 };
