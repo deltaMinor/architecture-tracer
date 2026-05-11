@@ -33,22 +33,9 @@ import { traceStep, ArchitectureState } from "#components/architectureState";
 const nodeTypes = { customNode: CustomNode };
 const edgeTypes = { customEdge: CustomEdge };
 
-const initialNodes: Node[] = [
-  {
-    id: "n#1",
-    type: "customNode",
-    data: { label: "Node 1", sourceCount: 1 },
-    position: { x: 5, y: 5 },
-  },
-  {
-    id: "n#2",
-    type: "customNode",
-    data: { label: "Node 2", targetCount: 1 },
-    position: { x: 5, y: 100 },
-  },
-];
+const initialNodes: Node[] = [];
 
-const initialEdges: Edge[] = [{ id: "e#1", source: "n#1", target: "n#2", type: "customEdge" }];
+const initialEdges: Edge[] = [];
 
 const fitViewOptions: FitViewOptions = {
   padding: 0.2,
@@ -138,7 +125,7 @@ export default function App() {
     (connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges],
   );
-  
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [traceSteps, setTraceSteps] = useState<traceStep[]>([]);
   const [currentlyTracing, setCurrentlyTracing] = useState<boolean>(false);

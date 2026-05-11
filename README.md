@@ -18,7 +18,7 @@ You can try out Architecture Tracer at https://deltaminor.github.io/architecture
 
 ## App components
 
-![Ui]({{ "/images/UI.png" | relative_url }})
+![Ui](docs/images//UI.png)
 
 - Nodes: Nodes will be indicated by white rectangular boxes, with their id on the top right corner. This may reference this id for commands involving nodes.
 - Edges: Edges will be indicated by white dashed lines, with their id overlayed on top. This may reference this id for commands involving edges.
