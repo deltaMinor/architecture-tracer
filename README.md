@@ -76,6 +76,13 @@ In addition, architecture-tracer also utilises the Command pattern to execute th
 
 Said patterns are used in this project as they are both very fitting for an application which executes tasks based on user input one at a time; as well as an application which centres around changing stored information based on external inputs and displaying said information to the user.
 
+## Requirements and Assumptions
+
+- Should be accessed primarily via a Command Line Interface.
+- Should utilise React for the frontend.
+- Architecture data must be compatible with React Flow’s Node and Edge formats.
+- Should run smoothly (e.g. always respond to user input within 250 milliseconds).
+
 ## Future Enhancements
 
 As this project was made from scratch in the span of 3-4 days, there remains a lot of room for improvement. Here are the enhancements I would like to implement if given more time, in no particular order:
