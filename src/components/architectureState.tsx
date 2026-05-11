@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Edge, Node, ReactFlowInstance } from "@xyflow/react";
+import { Edge, addEdge, Node, ReactFlowInstance } from "@xyflow/react";
 
 export type traceStep = {
   nodeId: string;
@@ -90,23 +89,62 @@ export class ArchitectureState {
     );
   }
 
-  setHighlightOfNodeWithId(id: string, toHighlight: boolean) {
+  editNodeWithId(id: string, map: (node: Node) => Node) {
     const toReplaceNode = this.getNodeWithId(id);
     if (toReplaceNode == undefined) {
       throw Error(`Node with id ${id} does not exist.`);
     }
-    const newNode = {
-      id: toReplaceNode.id,
+    const newNode = map(toReplaceNode);
+    this.replaceNodeWithId(id, newNode);
+  }
+
+  setHighlightOfNodeWithId(id: string, toHighlight: boolean) {
+    const setHighlightMap = (node: Node) => ({
+      id: node.id,
       type: "customNode",
-      position: { x: toReplaceNode.position.x, y: toReplaceNode.position.y },
+      position: { x: node.position.x, y: node.position.y },
       data: {
-        label: toReplaceNode.data.label,
-        sourceCount: toReplaceNode.data.sourceCount,
-        targetCount: toReplaceNode.data.targetCount,
+        label: node.data.label,
+        sourceCount: node.data.sourceCount,
+        targetCount: node.data.targetCount,
         isHighlighted: toHighlight,
       },
-    };
-    this.replaceNodeWithId(id, newNode);
+    });
+    this.editNodeWithId(id, setHighlightMap);
+  }
+
+  incrementSourceCountOfNodeWithId(id: string, change: number) {
+    const setHighlightMap = (node: Node) => ({
+      id: node.id,
+      type: "customNode",
+      position: { x: node.position.x, y: node.position.y },
+      data: {
+        label: node.data.label,
+        sourceCount: isNaN(node.data.sourceCount as number)
+          ? change
+          : (node.data.sourceCount as number) + change,
+        targetCount: node.data.targetCount,
+        isHighlighted: node.data.isHighlighted,
+      },
+    });
+    this.editNodeWithId(id, setHighlightMap);
+  }
+
+  incrementTargetCountOfNodeWithId(id: string, change: number) {
+    const setHighlightMap = (node: Node) => ({
+      id: node.id,
+      type: "customNode",
+      position: { x: node.position.x, y: node.position.y },
+      data: {
+        label: node.data.label,
+        sourceCount: node.data.sourceCount,
+        targetCount: isNaN(node.data.targetCount as number)
+          ? change
+          : (node.data.targetCount as number) + change,
+        isHighlighted: node.data.isHighlighted,
+      },
+    });
+    this.editNodeWithId(id, setHighlightMap);
   }
 
   hasEdgeWithId(id: string) {
@@ -142,7 +180,9 @@ export class ArchitectureState {
       source: source,
       target: target,
     };
-    this.reactFlow.setEdges((prev) => [...prev, newEdge]);
+    this.reactFlow.setEdges((prev) => addEdge(newEdge, prev));
+    this.incrementSourceCountOfNodeWithId(source, 1);
+    this.incrementTargetCountOfNodeWithId(target, 1);
     return newEdge;
   }
 
@@ -152,14 +192,10 @@ export class ArchitectureState {
       .filter((edge) => edge.source == id || edge.target == id);
   }
 
-  getEdgesWithNodeIds(id: string, id2: string) {
+  getEdgesWithNodeIds(source: string, target: string) {
     return this.reactFlow
       .getEdges()
-      .filter(
-        (edge) =>
-          (edge.source == id && edge.target == id2) ||
-          (edge.source == id2 && edge.target == id),
-      );
+      .filter((edge) => edge.source == source && edge.target == target);
   }
 
   getCurrentStep() {
@@ -222,7 +258,7 @@ export function nodeToString(node: Node | undefined) {
   if (node == undefined) {
     return "";
   }
-  return `Node ${node.data.label}(id: ${node.id})`;
+  return `Node ${node.id}(${node.data.label})`;
 }
 
 export function edgeToString(edge: Edge, architectureState: ArchitectureState) {
