@@ -76,8 +76,8 @@ class TraceCommand extends Command {
     const newTrace = !architectureState.isCurrentlyTracing();
     architectureState.addStep(this.nodeId, this.description);
     return newTrace
-      ? `Beginning new simulation trace at ${nodeToString(tracedNode)}: ${this.description}`
-      : `Moved to ${nodeToString(tracedNode)} ${this.description}`;
+      ? `Beginning new simulation trace at ${nodeToString(tracedNode)}. Description: ${this.description}`
+      : `Moved to ${nodeToString(tracedNode)}. Description: ${this.description}`;
   }
 }
 

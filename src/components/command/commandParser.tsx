@@ -52,7 +52,7 @@ function parseTraceCommand(tokens: string[]) {
   if (!isValidNodeId(tokens[1])) {
     throw Error(`Invalid parameter for trace command: ${tokens[1]}`);
   }
-  const remainder = tokens.slice(2).join(" ");
+  const remainder = tokens.slice(2).join(" ").trim();
   if (remainder == "") {
     throw Error(`Description cannot be blank.`);
   }

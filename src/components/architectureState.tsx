@@ -55,7 +55,7 @@ export class ArchitectureState {
 
   addNode(label: string) {
     if (this.currentlyTracing) {
-      throw Error("Unable to add node during simulation trace.");
+      throw Error("Unable to add node while simulation trace in progress.");
     }
     var newId = 1;
     var position = { x: 0, y: 0 };
@@ -164,6 +164,9 @@ export class ArchitectureState {
   }
 
   addEdge(source: string, target: string) {
+    if (this.currentlyTracing) {
+      throw Error("Unable to add edge while simulation trace in progress.");
+    }
     const similarEdges = this.getEdgesWithNodeIds(source, target);
     if (similarEdges.length > 0) {
       throw Error(edgeToString(similarEdges[0], this) + " already exists!");
@@ -233,7 +236,7 @@ export class ArchitectureState {
         ).length == 0
       ) {
         throw Error(
-          `Node ${this.getNodeWithId(thisNodeId)?.data.label}(id: ${thisNodeId}) is not connected to Node ${this.getNodeWithId(nodeId)?.data.label}(id: ${nodeId}).`,
+          `${nodeToString(this.getNodeWithId(thisNodeId))} is not connected to ${nodeToString(this.getNodeWithId(nodeId))}.`,
         );
       }
       this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, false);
