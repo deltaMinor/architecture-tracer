@@ -62,11 +62,13 @@ const onNodeDrag: OnNodeDrag = (_, node) => {
 
 /* Inner component of App where useReactFlow() can be called */
 function AppInner({
+  setCurrentTraceStep,
   traceSteps,
   setTraceSteps,
   currentlyTracing,
   setCurrentlyTracing,
 }: {
+  setCurrentTraceStep: React.Dispatch<React.SetStateAction<number>>;
   traceSteps: traceStep[];
   setTraceSteps: React.Dispatch<React.SetStateAction<traceStep[]>>;
   currentlyTracing: boolean;
@@ -80,6 +82,7 @@ function AppInner({
     reactFlow,
     traceSteps,
     setTraceSteps,
+    setCurrentTraceStep,
     currentlyTracing,
     setCurrentlyTracing,
   );
@@ -133,10 +136,11 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [traceSteps, setTraceSteps] = useState<traceStep[]>([]);
   const [currentlyTracing, setCurrentlyTracing] = useState<boolean>(false);
+  const [currentTraceStep, setCurrentTraceStep] = useState<number>(traceSteps.length - 1);
 
   return (
     <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
-      <TraceSidebar open={sidebarOpen} setOpen={setSidebarOpen} traceSteps={traceSteps} isCurrentlyTracing={currentlyTracing} />
+      <TraceSidebar open={sidebarOpen} setOpen={setSidebarOpen} traceSteps={traceSteps} currentStep={currentTraceStep} isCurrentlyTracing={currentlyTracing} />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -151,6 +155,7 @@ export default function App() {
       >
         <Background />
         <AppInner
+        setCurrentTraceStep={setCurrentTraceStep}
         traceSteps={traceSteps}
         setTraceSteps={setTraceSteps}
         currentlyTracing={currentlyTracing}

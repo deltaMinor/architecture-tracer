@@ -4,6 +4,7 @@ interface TraceSidebarProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   traceSteps: traceStep[];
+  currentStep: number;
   isCurrentlyTracing: boolean;
 }
 
@@ -11,6 +12,7 @@ export function TraceSidebar({
   open,
   setOpen,
   traceSteps,
+  currentStep,
   isCurrentlyTracing,
 }: TraceSidebarProps) {
   return (
@@ -87,12 +89,17 @@ export function TraceSidebar({
                 style={{
                   borderRadius: 8,
                   background: "#1e1f2b",
-                  border: "1px solid #000",
+                  border:
+                    i == currentStep ? "1px solid #555" : "1px solid #000",
                   margin: "6px 12px",
                   padding: "10px 8px",
                   display: "flex",
                   flexDirection: "column",
                   lineHeight: 1.25,
+                  boxShadow:
+                    i == currentStep
+                      ? "0 0 2px 2px rgba(255, 255, 255, 0.25)"
+                      : "none",
                 }}
               >
                 <span

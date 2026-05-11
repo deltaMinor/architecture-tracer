@@ -11,6 +11,7 @@ export class ArchitectureState {
   private steps: traceStep[];
   private setSteps: React.Dispatch<React.SetStateAction<traceStep[]>>;
   private currentStep: number;
+  private setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   private currentlyTracing: boolean;
   private setCurrentlyTracing: React.Dispatch<React.SetStateAction<boolean>>;
 
@@ -18,6 +19,7 @@ export class ArchitectureState {
     reactFlow: ReactFlowInstance,
     steps: traceStep[],
     setSteps: React.Dispatch<React.SetStateAction<traceStep[]>>,
+    setCurrentStep: React.Dispatch<React.SetStateAction<number>>,
     currentlyTracing: boolean,
     setCurrentlyTracing: React.Dispatch<React.SetStateAction<boolean>>,
   ) {
@@ -25,6 +27,7 @@ export class ArchitectureState {
     this.steps = steps;
     this.setSteps = setSteps;
     this.currentStep = steps.length - 1;
+    this.setCurrentStep = setCurrentStep;
     this.currentlyTracing = currentlyTracing;
     this.setCurrentlyTracing = setCurrentlyTracing;
   }
@@ -238,6 +241,7 @@ export class ArchitectureState {
     this.steps = [...this.steps, { nodeId, nodeName, description }];
     this.setSteps(this.steps);
     this.currentStep += 1;
+    this.setCurrentStep(this.currentStep);
     this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, true);
   }
 
@@ -245,6 +249,7 @@ export class ArchitectureState {
     this.steps = [];
     this.setSteps([]);
     this.currentStep = -1;
+    this.setCurrentStep(this.currentStep);
   }
 
   endTrace() {
