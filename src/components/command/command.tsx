@@ -1,6 +1,10 @@
 import { BuiltInEdge, useReactFlow, type Node } from "@xyflow/react";
 
-import { ArchitectureState, nodeToString } from "#components/architectureState";
+import {
+  ArchitectureState,
+  edgeToString,
+  nodeToString,
+} from "#components/architectureState";
 
 abstract class Command {
   abstract execute(architectureState: ArchitectureState): string;
@@ -26,6 +30,31 @@ class AddNodeCommand extends Command {
   }
 }
 
+class AddEdgeCommand extends Command {
+  private sourceNodeId: string;
+  private targetNodeId: string;
+
+  constructor(source: string, target: string) {
+    super();
+    this.sourceNodeId = source;
+    this.targetNodeId = target;
+  }
+
+  execute(architectureState: ArchitectureState) {
+    if (!architectureState.hasNodeWithId(this.sourceNodeId)) {
+      throw Error(`Node with id ${this.sourceNodeId} does not exist.`);
+    }
+    if (!architectureState.hasNodeWithId(this.targetNodeId)) {
+      throw Error(`Node with id ${this.targetNodeId} does not exist.`);
+    }
+    const newEdge = architectureState.addEdge(
+      this.sourceNodeId,
+      this.targetNodeId,
+    );
+    return edgeToString(newEdge, architectureState) + " added.";
+  }
+}
+
 class TraceCommand extends Command {
   private nodeId: string;
   private description: string;
@@ -38,7 +67,10 @@ class TraceCommand extends Command {
 
   execute(architectureState: ArchitectureState) {
     const tracedNode = architectureState.getNodeWithId(this.nodeId);
-    if(!architectureState.hasNodeWithId(this.nodeId) || tracedNode == undefined) {
+    if (
+      !architectureState.hasNodeWithId(this.nodeId) ||
+      tracedNode == undefined
+    ) {
       throw Error(`Node with id ${this.nodeId} does not exist.`);
     }
     const newTrace = !architectureState.isCurrentlyTracing();
@@ -49,4 +81,4 @@ class TraceCommand extends Command {
   }
 }
 
-export { Command, AddNodeCommand, TraceCommand };
+export { Command, AddNodeCommand, AddEdgeCommand, TraceCommand };

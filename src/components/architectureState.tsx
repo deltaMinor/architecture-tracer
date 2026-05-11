@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Node, ReactFlowInstance } from "@xyflow/react";
+import { Edge, Node, ReactFlowInstance } from "@xyflow/react";
 
 export type traceStep = {
   nodeId: string;
+  nodeName: string;
   description: string;
 };
 
@@ -125,10 +126,40 @@ export class ArchitectureState {
     this.reactFlow.getEdges().splice(index, 1);
   }
 
+  addEdge(source: string, target: string) {
+    const similarEdges = this.getEdgesWithNodeIds(source, target);
+    if (similarEdges.length > 0) {
+      throw Error(edgeToString(similarEdges[0], this) + " already exists!");
+    }
+    var newId = 1;
+    for (var edge of this.reactFlow.getEdges()) {
+      if (edge.id == "e#" + newId.toString()) {
+        newId += 1;
+      }
+    }
+    const newEdge = {
+      id: "e#" + newId.toString(),
+      source: source,
+      target: target,
+    };
+    this.reactFlow.setEdges((prev) => [...prev, newEdge]);
+    return newEdge;
+  }
+
   getEdgesWithNodeId(id: string) {
     return this.reactFlow
       .getEdges()
       .filter((edge) => edge.source == id || edge.target == id);
+  }
+
+  getEdgesWithNodeIds(id: string, id2: string) {
+    return this.reactFlow
+      .getEdges()
+      .filter(
+        (edge) =>
+          (edge.source == id && edge.target == id2) ||
+          (edge.source == id2 && edge.target == id),
+      );
   }
 
   getCurrentStep() {
@@ -145,9 +176,11 @@ export class ArchitectureState {
   }
 
   addStep(nodeId: string, description: string) {
-    if (!this.hasNodeWithId(nodeId)) {
+    const node = this.getNodeWithId(nodeId);
+    if (node == undefined) {
       throw Error(`Node with id ${nodeId} does not exist.`);
     }
+    const nodeName = node.data.label as string;
     if (!this.currentlyTracing) {
       this.beginTrace();
     } else {
@@ -166,7 +199,7 @@ export class ArchitectureState {
       }
       this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, false);
     }
-    this.steps = [...this.steps, { nodeId, description }];
+    this.steps = [...this.steps, { nodeId, nodeName, description }];
     this.setSteps(this.steps);
     this.currentStep += 1;
     this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, true);
@@ -190,4 +223,20 @@ export function nodeToString(node: Node | undefined) {
     return "";
   }
   return `Node ${node.data.label}(id: ${node.id})`;
+}
+
+export function edgeToString(edge: Edge, architectureState: ArchitectureState) {
+  var sourceNode: string;
+  var targetNode: string;
+  if (architectureState.hasNodeWithId(edge.source)) {
+    sourceNode = nodeToString(architectureState.getNodeWithId(edge.source));
+  } else {
+    sourceNode = "Node " + edge.source;
+  }
+  if (architectureState.hasNodeWithId(edge.target)) {
+    targetNode = nodeToString(architectureState.getNodeWithId(edge.target));
+  } else {
+    targetNode = "Node " + edge.target;
+  }
+  return `Edge connecting ${sourceNode} to ${targetNode}`;
 }

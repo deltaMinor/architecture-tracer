@@ -35,7 +35,7 @@ const initialNodes: Node[] = [
   {
     id: "n#1",
     type: "customNode",
-    data: { label: "Node 1", sourceCount: 1, isHighlighted: true },
+    data: { label: "Node 1", sourceCount: 1 },
     position: { x: 5, y: 5 },
   },
   {
@@ -61,12 +61,19 @@ const onNodeDrag: OnNodeDrag = (_, node) => {
 };
 
 /* Inner component of App where useReactFlow() can be called */
-function AppInner() {
+function AppInner({
+  traceSteps,
+  setTraceSteps,
+  currentlyTracing,
+  setCurrentlyTracing,
+}: {
+  traceSteps: traceStep[];
+  setTraceSteps: React.Dispatch<React.SetStateAction<traceStep[]>>;
+  currentlyTracing: boolean;
+  setCurrentlyTracing: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [responseText, setResponseText] = useState<string>("");
   const [responseStyle, setResponseStyle] = useState<string>("");
-
-  const [traceSteps, setTraceSteps] = useState<traceStep[]>([]);
-  const [currentlyTracing, setCurrentlyTracing] = useState<boolean>(false);
 
   const reactFlow = useReactFlow();
   const architectureState = new ArchitectureState(
@@ -77,7 +84,7 @@ function AppInner() {
     setCurrentlyTracing,
   );
 
-  const handleCommand = useCallback((commandString: string) => {
+  const handleCommand = (commandString: string) => {
     try {
       var newCommand: Command = parseCommand(commandString);
       setResponseText(newCommand.execute(architectureState));
@@ -90,7 +97,7 @@ function AppInner() {
       setResponseText(errorMessage);
       setResponseStyle(INVALID_INPUT);
     }
-  }, []);
+  };
 
   return (
     <>
@@ -103,7 +110,6 @@ function AppInner() {
           <ResponseBox text={responseText} style={responseStyle} />
         </div>
       </Panel>
-      <TraceSidebar architectureState={architectureState} />
     </>
   );
 }
@@ -124,22 +130,32 @@ export default function App() {
     (connection) => setEdges((eds) => addEdge(connection, eds)),
     [setEdges],
   );
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [traceSteps, setTraceSteps] = useState<traceStep[]>([]);
+  const [currentlyTracing, setCurrentlyTracing] = useState<boolean>(false);
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      onNodeDrag={onNodeDrag}
-      fitView
-      fitViewOptions={fitViewOptions}
-      defaultEdgeOptions={defaultEdgeOptions}
-    >
-      <Background />
-      <AppInner />
-    </ReactFlow>
+    <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
+      <TraceSidebar open={sidebarOpen} setOpen={setSidebarOpen} traceSteps={traceSteps} isCurrentlyTracing={currentlyTracing} />
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeDrag={onNodeDrag}
+        fitView
+        fitViewOptions={fitViewOptions}
+        defaultEdgeOptions={defaultEdgeOptions}
+      >
+        <Background />
+        <AppInner
+        traceSteps={traceSteps}
+        setTraceSteps={setTraceSteps}
+        currentlyTracing={currentlyTracing}
+        setCurrentlyTracing={setCurrentlyTracing}/>
+      </ReactFlow>
+    </div>
   );
 }

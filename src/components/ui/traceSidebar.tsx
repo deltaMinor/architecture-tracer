@@ -1,20 +1,132 @@
-import { useState } from "react";
-import { ArchitectureState, nodeToString } from "../architectureState";
+import { traceStep } from "../architectureState";
 
 interface TraceSidebarProps {
-  architectureState: ArchitectureState;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  traceSteps: traceStep[];
+  isCurrentlyTracing: boolean;
 }
 
-export function TraceSidebar({ architectureState }: TraceSidebarProps) {
-  const [open, setOpen] = useState(false);
-
+export function TraceSidebar({
+  open,
+  setOpen,
+  traceSteps,
+  isCurrentlyTracing,
+}: TraceSidebarProps) {
   return (
-    <>
+    <div style={{ display: "flex", height: "100vh" }}>
+      {/* Sidebar panel */}
+      <div
+        style={{
+          width: open ? 260 : 0,
+          minWidth: 0,
+          overflow: "hidden",
+          height: "100%",
+          background: "#16171D",
+          borderRight: open ? "1px solid #2a2b38" : "none",
+          transition: "width 0.25s ease",
+          display: "flex",
+          flexDirection: "column",
+          boxShadow: open ? "4px 0 16px rgba(0,0,0,0.4)" : "none",
+        }}
+      >
+        {/* Header */}
+        <div
+          style={{
+            padding: "16px 16px 12px",
+            borderBottom: "1px solid #2a2b38",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <span
+            style={{
+              color: "#e0e0e8",
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: "0.02em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Trace Log
+          </span>
+        </div>
+
+        {/* Entries */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "8px 0" }}>
+          <div
+            style={{
+              fontFamily: "ui-monospace, monospace",
+              color: "#fff",
+              fontSize: 14,
+              textAlign: "center",
+            }}
+          >
+            Simulation trace:{" "}
+            {isCurrentlyTracing ? (
+              <span style={{ color: "#0f0", fontWeight: "bold" }}>on</span>
+            ) : (
+              <span style={{ color: "#f00", fontWeight: "bold" }}>off</span>
+            )}
+          </div>
+          {traceSteps.length === 0 ? (
+            <div
+              style={{
+                color: "#555",
+                fontSize: 12,
+                textAlign: "center",
+                marginTop: 24,
+                fontStyle: "italic",
+              }}
+            >
+              Trace log is currently empty.
+            </div>
+          ) : (
+            [...traceSteps].map((step, i) => (
+              <div
+                key={i}
+                style={{
+                  padding: "8px 14px",
+                  borderBottom: "1px solid #1e1f2b",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "ui-monospace, monospace",
+                    color: "#fff",
+                    fontSize: 13,
+                    fontWeight: 600,
+                  }}
+                >
+                  trace {step.nodeId}
+                  {"("}
+                  {step.nodeName}
+                  {")"}
+                </span>
+                <span
+                  style={{
+                    color: "#555",
+                    fontSize: 10,
+                  }}
+                >
+                  {step.description}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      {/* Toggle button */}
       <button
         onClick={() => setOpen((o) => !o)}
         title="Trace log"
         style={{
-          position: "fixed",
+          position: "absolute",
           top: "5%",
           left: open ? 260 : 0,
           transform: "translateY(-50%)",
@@ -34,7 +146,6 @@ export function TraceSidebar({ architectureState }: TraceSidebarProps) {
           boxShadow: "-2px 0 8px rgba(0,0,0,0.3)",
         }}
       >
-        {/* "Tr" icon */}
         <span
           style={{
             fontFamily: "ui-monospace, monospace",
@@ -47,7 +158,7 @@ export function TraceSidebar({ architectureState }: TraceSidebarProps) {
         >
           Tr
         </span>
-        {architectureState.getTraceSteps().length > 0 && (
+        {traceSteps.length > 0 && (
           <span
             style={{
               background: "#777",
@@ -63,121 +174,10 @@ export function TraceSidebar({ architectureState }: TraceSidebarProps) {
               padding: "0 4px",
             }}
           >
-            {architectureState.getTraceSteps().length}
+            {traceSteps.length}
           </span>
         )}
       </button>
-
-      {/* Sidebar panel */}
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          height: "100%",
-          width: 260,
-          background: "#16171D",
-          borderRight: "1px solid #2a2b38",
-          zIndex: 49,
-          transform: open ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform 0.25s ease",
-          display: "flex",
-          flexDirection: "column",
-          boxShadow: "-4px 0 16px rgba(0,0,0,0.4)",
-        }}
-      >
-        {/* Header */}
-        <div
-          style={{
-            padding: "16px 16px 12px",
-            borderBottom: "1px solid #2a2b38",
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span
-            style={{
-              color: "#e0e0e8",
-              fontSize: 13,
-              fontWeight: 600,
-              letterSpacing: "0.02em",
-            }}
-          >
-            Trace Log
-          </span>
-        </div>
-
-        {/* Entries */}
-        <div
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            padding: "8px 0",
-          }}
-        >
-          <div
-            style={{
-              fontFamily: "ui-monospace, monospace",
-              color: "#fff",
-              fontSize: 14,
-              textAlign: "center",
-            }}
-          >
-            Simulation trace:{" "}
-            {architectureState.isCurrentlyTracing() ? (
-              <span style={{ color: "#0f0", fontWeight: "bold" }}>on</span>
-            ) : (
-              <span style={{ color: "#f00", fontWeight: "bold" }}>off</span>
-            )}
-          </div>
-          {architectureState.getTraceSteps().length === 0 ? (
-            <div
-              style={{
-                color: "#555",
-                fontSize: 12,
-                textAlign: "center",
-                marginTop: 24,
-                fontStyle: "italic",
-              }}
-            >
-              Trace log is currently empty.
-            </div>
-          ) : (
-            [...architectureState.getTraceSteps()].reverse().map((step) => (
-              <div
-                style={{
-                  padding: "8px 14px",
-                  borderBottom: "1px solid #1e1f2b",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 2,
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "ui-monospace, monospace",
-                    color: "#fff",
-                    fontSize: 13,
-                    fontWeight: 600,
-                  }}
-                >
-                  trace{" "}
-                  {nodeToString(architectureState.getNodeWithId(step.nodeId))}
-                </span>
-                <span
-                  style={{
-                    color: "#555",
-                    fontSize: 10,
-                  }}
-                >
-                  {step.description}
-                </span>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
-    </>
+    </div>
   );
 }

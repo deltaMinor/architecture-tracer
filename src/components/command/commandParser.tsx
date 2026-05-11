@@ -1,6 +1,8 @@
-import { AddNodeCommand, TraceCommand } from "./command";
+import { AddNodeCommand, AddEdgeCommand, TraceCommand } from "./command";
 
 import { isValidNodeLabel, isValidNodeId } from "./validationParser";
+
+const EDGE_CONSTRUCTOR_REGEX = /^e\/n#\d+ n#\d+$/;
 
 function parseCommand(commandString: string) {
   var tokens = commandString.split(" ");
@@ -14,6 +16,10 @@ function parseCommand(commandString: string) {
   }
 }
 
+function isValidEdgeConstructor(token: string) {
+  return EDGE_CONSTRUCTOR_REGEX.test(token);
+}
+
 function parseAddCommand(tokens: string[]) {
   if (tokens.length < 2) {
     throw Error("Insufficient parameters for add command.");
@@ -21,6 +27,10 @@ function parseAddCommand(tokens: string[]) {
   const remainder = tokens.slice(1).join(" ");
   if (isValidNodeLabel(remainder)) {
     return new AddNodeCommand(remainder.substring(2));
+  }
+  if (isValidEdgeConstructor(remainder)) {
+    var ids = remainder.substring(2).split(" ");
+    return new AddEdgeCommand(ids[0], ids[1]);
   }
   throw Error(`Invalid parameter for add command: ${remainder}`);
 }
