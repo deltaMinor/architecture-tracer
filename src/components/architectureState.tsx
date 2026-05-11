@@ -40,17 +40,32 @@ export class ArchitectureState {
     return this.reactFlow.getNodes().filter((node) => node.id == id).length > 0;
   }
 
+  getNodeCount() {
+    return this.reactFlow.getNodes().length;
+  }
+
   getNodeWithId(id: string) {
     return this.reactFlow.getNodes().find((node) => node.id == id);
   }
 
   removeNodeWithId(id: string) {
+    if (this.currentlyTracing) {
+      throw Error("Unable to delete node while simulation trace in progress.");
+    }
     const toRemoveNode = this.getNodeWithId(id);
     if (toRemoveNode == undefined) {
       throw Error(`Node with id ${id} does not exist.`);
     }
-    const index = this.reactFlow.getNodes().indexOf(toRemoveNode, 0);
-    this.reactFlow.getNodes().splice(index, 1);
+    for (var edge of this.getEdgesWithNodeId(id)) {
+      this.removeEdgeWithId(edge.id);
+    }
+    this.reactFlow.setNodes((prev) => prev.filter((node) => node.id != id));
+  }
+
+  removeAllNodes() {
+    for (var node of this.reactFlow.getNodes()) {
+      this.removeNodeWithId(node.id);
+    }
   }
 
   addNode(label: string) {
@@ -155,12 +170,17 @@ export class ArchitectureState {
   }
 
   removeEdgeWithId(id: string) {
+    if (this.currentlyTracing) {
+      throw Error("Unable to delete edge while simulation trace in progress.");
+    }
     const toRemoveEdge = this.getEdgeWithId(id);
     if (toRemoveEdge == undefined) {
-      throw Error(`Node with id ${id} does not exist.`);
+      throw Error(`Edge with id ${id} does not exist.`);
     }
     const index = this.reactFlow.getEdges().indexOf(toRemoveEdge, 0);
-    this.reactFlow.getEdges().splice(index, 1);
+    this.incrementSourceCountOfNodeWithId(toRemoveEdge.source, -1);
+    this.incrementTargetCountOfNodeWithId(toRemoveEdge.target, -1);
+    this.reactFlow.setEdges((prev) => prev.filter((node) => node.id != id));
   }
 
   addEdge(source: string, target: string) {
@@ -181,8 +201,9 @@ export class ArchitectureState {
       id: "e#" + newId.toString(),
       source: source,
       target: target,
+      type: "customEdge",
     };
-    this.reactFlow.setEdges((prev) => addEdge(newEdge, prev));
+    this.reactFlow.setEdges((prev) => [...prev, newEdge]);
     this.incrementSourceCountOfNodeWithId(source, 1);
     this.incrementTargetCountOfNodeWithId(target, 1);
     return newEdge;
