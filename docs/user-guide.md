@@ -3,9 +3,21 @@ layout: page
 title: User Guide
 ---
 
+## Installation guide
+
+1. Install Node.js from [https://nodejs.org](https://nodejs.org).
+2. Download the repo [here](https://github.com/deltaMinor/architecture-tracer).
+3. Unzip the folder, and open the terminal inside the unzipped `architecture-tracer-main` folder.
+4. Run these two commands one at a time:
+   ```
+   npm install
+   npm run dev
+   ```
+5. Open the app site in your browser. (It should be in the pattern of http://localhost:XXXX/app/)
+
 ## App components
 
-![Ui](docs\images\UI.png)
+![Ui]({{ "/images/UI.png" | relative_url }})
 
 - Nodes: Nodes will be indicated by white rectangular boxes, with their id on the top right corner. This may reference this id for commands involving nodes.
 - Edges: Edges will be indicated by white dashed lines, with their id overlayed on top. This may reference this id for commands involving edges.

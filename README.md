@@ -6,17 +6,19 @@ You can try out Architecture Tracer at https://deltaminor.github.io/architecture
 
 ## Installation guide
 
-1. Install Node.js from https://nodejs.org.
-2. Download the latest release here.
-3. Unzip the folder, and open the terminal inside the folder.
-4. Paste these two commands one at a time:
+1. Install Node.js from [https://nodejs.org](https://nodejs.org).
+2. Download the repo [here](https://github.com/deltaMinor/architecture-tracer).
+3. Unzip the folder, and open the terminal inside the unzipped `architecture-tracer-main` folder.
+4. Run these two commands one at a time:
    ```
    npm install
    npm run dev
    ```
-5. Open http://localhost:5173 in your browser.
+5. Open the app site in your browser. (It should be in the pattern of http://localhost:XXXX/app/)
 
 ## App components
+
+![Ui]({{ "/images/UI.png" | relative_url }})
 
 - Nodes: Nodes will be indicated by white rectangular boxes, with their id on the top right corner. This may reference this id for commands involving nodes.
 - Edges: Edges will be indicated by white dashed lines, with their id overlayed on top. This may reference this id for commands involving edges.
@@ -26,16 +28,12 @@ You can try out Architecture Tracer at https://deltaminor.github.io/architecture
 
 ## Commands
 
-<box type="info" seamless>
-
-**Notes about the command format:**
+ℹ️**Notes about the command format:**
 
 - Words in `SCREAMING_SNAKE_CASE` are parameters to be supplied by the user.
   e.g. in `add n/LABEL`, `LABEL` is a parameter, so you might write `add n/Database`.
 
 - Unrecognised commands or commands with incorrect formatting will result in an error message and be rejected by the app.
-
-</box>
 
 ### Adding/deleting nodes and edges
 
@@ -45,11 +43,7 @@ You can try out Architecture Tracer at https://deltaminor.github.io/architecture
 - `delete e#ID`: Delete the edge with id "e#`ID`".
 - `clear`: Delete all nodes and edges.
 
-<box type="warning" seamless>
-
-when there is an ongoing simulation trace, you will not be able to edit the architecture.
-
-</box>
+⚠️ Note: when there is an ongoing simulation trace, you will not be able to edit the architecture.
 
 ### Simulation trace
 
@@ -58,11 +52,7 @@ when there is an ongoing simulation trace, you will not be able to edit the arch
 - `trace prev`: Go to the previous trace step.
 - `trace next`: Go to the next trace step.
 
-<box type="warning" seamless>
-
 For more detailed information, consult the [User Guide](https://deltaminor.github.io/architecture-tracer/user-guide.html).
-
-</box>
 
 ## Design
 
@@ -96,8 +86,4 @@ As this project was made from scratch in the span of 3-4 days, there remains a l
 - Edge direction: Currently, the direction of an edge does not matter in a simulation trace. Perhaps the simulation trace mechanics can be adjusted such that the edge can only be travelled by the trace in one direction.
 - Higher test coverage: Currently, the test coverage of this project is around 68%. The coverage should ideally be higher for the sake of ensuring better code quality and easier development of the project in the future.
 
-<box type="warning" seamless>
-
 For more detailed information, consult the [Developer Guide](https://deltaminor.github.io/architecture-tracer/developer-guide.html).
-
-</box>
