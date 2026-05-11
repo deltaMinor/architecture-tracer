@@ -90,14 +90,16 @@ export function TraceSidebar({
                   borderRadius: 8,
                   background: "#1e1f2b",
                   border:
-                    i == currentStep ? "1px solid #555" : "1px solid #000",
+                    i == currentStep && isCurrentlyTracing
+                      ? "1px solid #555"
+                      : "1px solid #000",
                   margin: "6px 12px",
                   padding: "10px 8px",
                   display: "flex",
                   flexDirection: "column",
                   lineHeight: 1.25,
                   boxShadow:
-                    i == currentStep
+                    i == currentStep && isCurrentlyTracing
                       ? "0 0 2px 2px rgba(255, 255, 255, 0.25)"
                       : "none",
                 }}

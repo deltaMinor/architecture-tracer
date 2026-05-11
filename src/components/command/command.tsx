@@ -81,4 +81,26 @@ class TraceCommand extends Command {
   }
 }
 
-export { Command, AddNodeCommand, AddEdgeCommand, TraceCommand };
+class EndTraceCommand extends Command {
+  constructor() {
+    super();
+  }
+
+  execute(architectureState: ArchitectureState) {
+    if (!architectureState.isCurrentlyTracing) {
+      throw new Error(
+        "There is no simulation trace that are currently in progress",
+      );
+    }
+    architectureState.endTrace();
+    return `Trace ended at step ${architectureState.getCurrentStepNumber()}`;
+  }
+}
+
+export {
+  Command,
+  AddNodeCommand,
+  AddEdgeCommand,
+  TraceCommand,
+  EndTraceCommand,
+};

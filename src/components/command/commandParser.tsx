@@ -1,4 +1,9 @@
-import { AddNodeCommand, AddEdgeCommand, TraceCommand } from "./command";
+import {
+  AddNodeCommand,
+  AddEdgeCommand,
+  TraceCommand,
+  EndTraceCommand,
+} from "./command";
 
 import { isValidNodeLabel, isValidNodeId } from "./validationParser";
 
@@ -36,6 +41,11 @@ function parseAddCommand(tokens: string[]) {
 }
 
 function parseTraceCommand(tokens: string[]) {
+  if (tokens.length == 2) {
+    if (tokens[1] == "end") {
+      return new EndTraceCommand();
+    }
+  }
   if (tokens.length < 3) {
     throw Error("Insufficient parameters for trace command.");
   }

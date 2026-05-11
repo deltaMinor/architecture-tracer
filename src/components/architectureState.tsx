@@ -32,10 +32,6 @@ export class ArchitectureState {
     this.setCurrentlyTracing = setCurrentlyTracing;
   }
 
-  getTraceSteps() {
-    return this.steps;
-  }
-
   isCurrentlyTracing() {
     return this.currentlyTracing;
   }
@@ -199,6 +195,10 @@ export class ArchitectureState {
     return this.reactFlow
       .getEdges()
       .filter((edge) => edge.source == source && edge.target == target);
+  }
+
+  getCurrentStepNumber() {
+    return this.currentStep;
   }
 
   getCurrentStep() {
