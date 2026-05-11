@@ -1,46 +1,90 @@
-import { describe, it, expect } from "vitest";
-import { AddNodeCommand } from "#components/command/command";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import {
+  AddNodeCommand,
+  AddEdgeCommand,
+  TraceCommand,
+} from "#components/command/command";
+import { Edge } from "@xyflow/react";
+import { mockState, makeNode } from "../../utils/constructors";
 
-describe("AddNodeCommand.execute", () => {
-  function makeReactFlowStub(existingNodes: { id: string; position: { x: number; y: number } }[]) {
-    const nodes = existingNodes;
-    return {
-      getNodes: () => nodes,
-      setNodes: (updater: (prev: typeof nodes) => typeof nodes) => {
-        updater(nodes);
-      },
-    };
-  }
- 
-  it("adds a node to an empty architecture id n#1", () => {
-    const stub = makeReactFlowStub([]);
-    const cmd = new AddNodeCommand("Foo");
- 
-    const result = cmd.execute(stub as any);
-    expect(result).toEqual("Node Foo added(id: n#1).");
+describe("AddNodeCommand", () => {
+  it("executes and returns a formatted string", () => {
+    const state = mockState();
+    const cmd = new AddNodeCommand("Foo Bar");
+    const result = cmd.execute(state);
+    expect(result).toMatch(/Node n#1\(Foo Bar\) added\./);
   });
- 
-  it("increments the id when id '1' is already taken", () => {
-    const stub = makeReactFlowStub([
-      { id: "n#1", position: { x: 0, y: 0 } },
-    ]);
-    const cmd = new AddNodeCommand("Bar");
-    const result = cmd.execute(stub as any);
- 
-    // id 'n#1' is taken, so the new node should receive id 'n#2'
-    expect(result).toEqual("Node Bar added(id: n#2).");
+
+  it("throws when tracing is in progress", () => {
+    const node = makeNode("n#1", "Foo");
+    const state = mockState({ nodes: [node], currentlyTracing: true });
+    const cmd = new AddNodeCommand("NewService");
+    expect(() => cmd.execute(state)).toThrow(
+      "Unable to add node while simulation trace in progress.",
+    );
   });
- 
-  it("increments the id to the smallest available id", () => {
-    const stub = makeReactFlowStub([
-      { id: "n#1", position: { x: 0, y: 0 } },
-      { id: "n#2", position: { x: 0, y: 0 } },
-      { id: "n#4", position: { x: 0, y: 0 } },
-    ]);
-    const cmd = new AddNodeCommand("Baz");
-    const result = cmd.execute(stub as any);
- 
-    // id 'n#1' and 'n#2' are taken, but 'n#3' is not
-    expect(result).toEqual("Node Baz added(id: n#3).");
+});
+
+describe("AddEdgeCommand", () => {
+  it("throws when source node does not exist", () => {
+    const state = mockState({ nodes: [makeNode("n#1", "Foo")] });
+    const cmd = new AddEdgeCommand("n#2", "n#1");
+    expect(() => cmd.execute(state)).toThrow(
+      "Node with id n#2 does not exist.",
+    );
+  });
+
+  it("throws when target node does not exist", () => {
+    const state = mockState({ nodes: [makeNode("n#1", "Foo")] });
+    const cmd = new AddEdgeCommand("n#1", "n#2");
+    expect(() => cmd.execute(state)).toThrow(
+      "Node with id n#2 does not exist.",
+    );
+  });
+
+  it("executes successfully with a valid inputand returns a formatted string", () => {
+    const state = mockState({
+      nodes: [makeNode("n#1", "Foo"), makeNode("n#2", "Bar")],
+    });
+    const cmd = new AddEdgeCommand("n#1", "n#2");
+    const result = cmd.execute(state);
+    expect(result).toMatch(
+      /Edge connecting Node n#1\(Foo\) to Node n#2\(Bar\) added\./,
+    );
+  });
+});
+
+describe("TraceCommand", () => {
+  it("throws when node does not exist", () => {
+    const state = mockState();
+    const cmd = new TraceCommand("n#1", "Begin");
+    expect(() => cmd.execute(state)).toThrow(
+      "Node with id n#1 does not exist.",
+    );
+  });
+
+  it("begins a new trace and returns the beginning message", () => {
+    const node = makeNode("n#1", "Foo");
+    const state = mockState({ nodes: [node] });
+    const cmd = new TraceCommand("n#1", "Begin");
+    const result = cmd.execute(state);
+    expect(result).toMatch(
+      "Beginning new simulation trace at Node n#1\(Foo\). Description: Begin",
+    );
+  });
+
+  it("moves to the next node and returns move message", () => {
+    const n1 = makeNode("n#1", "Foo");
+    const n2 = makeNode("n#2", "Bar");
+    const edge: Edge = { id: "e#1", source: "n#1", target: "n#2" };
+    const state = mockState({
+      nodes: [n1, n2],
+      edges: [edge],
+    });
+    // First trace step
+    new TraceCommand("n#1", "start").execute(state);
+    // Second trace step
+    const result = new TraceCommand("n#2", "next").execute(state);
+    expect(result).toMatch("Moved to Node n#2\(Bar\). Description: next");
   });
 });

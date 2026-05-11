@@ -1,51 +1,106 @@
+import { BuiltInEdge, useReactFlow, type Node } from "@xyflow/react";
+
 import {
-    BuiltInEdge,
-    ReactFlowInstance,
-    useReactFlow,
-    type Node
-} from '@xyflow/react'; 
+  ArchitectureState,
+  edgeToString,
+  nodeToString,
+} from "#components/architectureState";
 
 abstract class Command {
-    abstract execute(reactFlow: ReactFlowInstance): string;
+  abstract execute(architectureState: ArchitectureState): string;
 }
 
-function addNode (node: Node) {
-    const { setNodes } = useReactFlow<Node, BuiltInEdge>();
+function addNode(node: Node) {
+  const { setNodes } = useReactFlow<Node, BuiltInEdge>();
 
-    setNodes((prev) => [...prev, node]);
+  setNodes((prev) => [...prev, node]);
 }
 
 class AddNodeCommand extends Command {
-    private newNodeLabel: string;
+  private newNodeLabel: string;
 
-    constructor(label: string) {
-        super();
-        this.newNodeLabel = label;
-    }
+  constructor(label: string) {
+    super();
+    this.newNodeLabel = label;
+  }
 
-    execute(reactFlow: ReactFlowInstance) {
-        var newId = 1;
-        var position = {x: 0, y: 0};
-        for (var node of reactFlow.getNodes()) {
-            if(node.id == "n#" + newId.toString()) {
-                newId += 1;
-            }
-            position.x += node.position.x;
-            position.y += node.position.y;
-        }
-        var nodeCount = reactFlow.getNodes().length;
-        const newNode = {
-            id: "n#" + newId.toString(),
-            type: 'customNode',
-            position: { x: position.x/nodeCount, y: position.y/nodeCount },
-            data: { label: this.newNodeLabel },
-        };
-        reactFlow.setNodes((prev) => [...prev, newNode]);
-        return `Node ${this.newNodeLabel} added(id: ${newNode.id}).`;
+  execute(architectureState: ArchitectureState) {
+    const newNode = architectureState.addNode(this.newNodeLabel);
+    return nodeToString(newNode) + " added.";
+  }
+}
+
+class AddEdgeCommand extends Command {
+  private sourceNodeId: string;
+  private targetNodeId: string;
+
+  constructor(source: string, target: string) {
+    super();
+    this.sourceNodeId = source;
+    this.targetNodeId = target;
+  }
+
+  execute(architectureState: ArchitectureState) {
+    if (!architectureState.hasNodeWithId(this.sourceNodeId)) {
+      throw Error(`Node with id ${this.sourceNodeId} does not exist.`);
     }
+    if (!architectureState.hasNodeWithId(this.targetNodeId)) {
+      throw Error(`Node with id ${this.targetNodeId} does not exist.`);
+    }
+    const newEdge = architectureState.addEdge(
+      this.sourceNodeId,
+      this.targetNodeId,
+    );
+    return edgeToString(newEdge, architectureState) + " added.";
+  }
+}
+
+class TraceCommand extends Command {
+  private nodeId: string;
+  private description: string;
+
+  constructor(id: string, description: string) {
+    super();
+    this.nodeId = id;
+    this.description = description;
+  }
+
+  execute(architectureState: ArchitectureState) {
+    const tracedNode = architectureState.getNodeWithId(this.nodeId);
+    if (
+      !architectureState.hasNodeWithId(this.nodeId) ||
+      tracedNode == undefined
+    ) {
+      throw Error(`Node with id ${this.nodeId} does not exist.`);
+    }
+    const newTrace = !architectureState.isCurrentlyTracing();
+    architectureState.addStep(this.nodeId, this.description);
+    return newTrace
+      ? `Beginning new simulation trace at ${nodeToString(tracedNode)}. Description: ${this.description}`
+      : `Moved to ${nodeToString(tracedNode)}. Description: ${this.description}`;
+  }
+}
+
+class EndTraceCommand extends Command {
+  constructor() {
+    super();
+  }
+
+  execute(architectureState: ArchitectureState) {
+    if (!architectureState.isCurrentlyTracing) {
+      throw new Error(
+        "There is no simulation trace that are currently in progress",
+      );
+    }
+    architectureState.endTrace();
+    return `Trace ended at step ${architectureState.getCurrentStepNumber()}`;
+  }
 }
 
 export {
-    Command,
-    AddNodeCommand
-}
+  Command,
+  AddNodeCommand,
+  AddEdgeCommand,
+  TraceCommand,
+  EndTraceCommand,
+};
