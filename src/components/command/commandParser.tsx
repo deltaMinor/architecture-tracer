@@ -6,6 +6,7 @@ import {
   ClearCommand,
   TraceCommand,
   EndTraceCommand,
+  TraceShiftCommand,
 } from "./command";
 
 import {
@@ -75,8 +76,18 @@ function parseClearCommand(tokens: string[]) {
 
 function parseTraceCommand(tokens: string[]) {
   if (tokens.length == 2) {
-    if (tokens[1] == "end") {
-      return new EndTraceCommand();
+    switch (tokens[1]) {
+      case "end":
+        return new EndTraceCommand();
+      case "next":
+        return new TraceShiftCommand(1);
+      case "prev":
+        return new TraceShiftCommand(-1);
+      default:
+        if (isValidNodeId(tokens[1])) {
+          throw Error("Insufficient parameters for trace command. (Missing description)");
+        }
+        throw Error(`Invalid parameter for trace command: ${tokens[1]}`);
     }
   }
   if (tokens.length < 3) {

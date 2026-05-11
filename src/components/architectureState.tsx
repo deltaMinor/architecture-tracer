@@ -19,6 +19,7 @@ export class ArchitectureState {
     reactFlow: ReactFlowInstance,
     steps: traceStep[],
     setSteps: React.Dispatch<React.SetStateAction<traceStep[]>>,
+    currentStep: number,
     setCurrentStep: React.Dispatch<React.SetStateAction<number>>,
     currentlyTracing: boolean,
     setCurrentlyTracing: React.Dispatch<React.SetStateAction<boolean>>,
@@ -26,7 +27,7 @@ export class ArchitectureState {
     this.reactFlow = reactFlow;
     this.steps = steps;
     this.setSteps = setSteps;
-    this.currentStep = steps.length - 1;
+    this.currentStep = currentStep;
     this.setCurrentStep = setCurrentStep;
     this.currentlyTracing = currentlyTracing;
     this.setCurrentlyTracing = setCurrentlyTracing;
@@ -266,6 +267,29 @@ export class ArchitectureState {
     this.setSteps(this.steps);
     this.currentStep += 1;
     this.setCurrentStep(this.currentStep);
+    this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, true);
+  }
+
+  shiftStep(change: number) {
+    if (change == 0) {
+      throw Error("The number of steps to shift cannot be zero.");
+    }
+    this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, false);
+    if (change > 0) {
+      if (this.currentStep + change >= this.steps.length) {
+        throw Error(
+          `End of trace history reached. ${this.currentStep} ${this.steps.length}`,
+        );
+      }
+      this.setCurrentStep(this.currentStep + change);
+      this.currentStep += change;
+    } else {
+      if (this.currentStep + change < 0) {
+        throw Error("Beginning of trace history reached.");
+      }
+      this.setCurrentStep(this.currentStep + change);
+      this.currentStep += change;
+    }
     this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, true);
   }
 
