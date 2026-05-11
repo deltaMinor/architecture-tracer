@@ -277,9 +277,7 @@ export class ArchitectureState {
     this.setHighlightOfNodeWithId(this.steps[this.currentStep].nodeId, false);
     if (change > 0) {
       if (this.currentStep + change >= this.steps.length) {
-        throw Error(
-          `End of trace history reached. ${this.currentStep} ${this.steps.length}`,
-        );
+        throw Error(`End of trace history reached.`);
       }
       this.setCurrentStep(this.currentStep + change);
       this.currentStep += change;

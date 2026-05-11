@@ -85,7 +85,9 @@ function parseTraceCommand(tokens: string[]) {
         return new TraceShiftCommand(-1);
       default:
         if (isValidNodeId(tokens[1])) {
-          throw Error("Insufficient parameters for trace command. (Missing description)");
+          throw Error(
+            "Insufficient parameters for trace command. (Missing description)",
+          );
         }
         throw Error(`Invalid parameter for trace command: ${tokens[1]}`);
     }
