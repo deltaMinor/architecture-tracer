@@ -97,10 +97,25 @@ class EndTraceCommand extends Command {
   }
 }
 
+class TraceShiftCommand extends Command {
+  private shift: number;
+
+  constructor(shift: number) {
+    super();
+    this.shift = shift;
+  }
+
+  execute(architectureState: ArchitectureState) {
+    architectureState.shiftStep(this.shift);
+    return `Trace moved to step ${architectureState.getCurrentStepNumber()}. Description: ${architectureState.getCurrentStep()?.description}`;
+  }
+}
+
 export {
   Command,
   AddNodeCommand,
   AddEdgeCommand,
   TraceCommand,
   EndTraceCommand,
+  TraceShiftCommand
 };

@@ -15,6 +15,7 @@ export function mockState({
   edges = [] as Edge[],
   traceSteps = [] as traceStep[],
   currentlyTracing = false,
+  currentStep = -1
 } = {}) {
   let internalNodes = [...nodes];
   let internalEdges = [...edges];
@@ -40,6 +41,7 @@ export function mockState({
     reactFlow,
     traceSteps,
     setSteps,
+    currentStep,
     setCurrentStep,
     currentlyTracing,
     setCurrentlyTracing,

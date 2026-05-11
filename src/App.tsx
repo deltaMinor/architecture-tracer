@@ -62,12 +62,14 @@ const onNodeDrag: OnNodeDrag = (_, node) => {
 
 /* Inner component of App where useReactFlow() can be called */
 function AppInner({
+  currentTraceStep,
   setCurrentTraceStep,
   traceSteps,
   setTraceSteps,
   currentlyTracing,
   setCurrentlyTracing,
 }: {
+  currentTraceStep: number;
   setCurrentTraceStep: React.Dispatch<React.SetStateAction<number>>;
   traceSteps: traceStep[];
   setTraceSteps: React.Dispatch<React.SetStateAction<traceStep[]>>;
@@ -82,6 +84,7 @@ function AppInner({
     reactFlow,
     traceSteps,
     setTraceSteps,
+    currentTraceStep,
     setCurrentTraceStep,
     currentlyTracing,
     setCurrentlyTracing,
@@ -136,11 +139,19 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [traceSteps, setTraceSteps] = useState<traceStep[]>([]);
   const [currentlyTracing, setCurrentlyTracing] = useState<boolean>(false);
-  const [currentTraceStep, setCurrentTraceStep] = useState<number>(traceSteps.length - 1);
+  const [currentTraceStep, setCurrentTraceStep] = useState<number>(
+    traceSteps.length - 1,
+  );
 
   return (
     <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
-      <TraceSidebar open={sidebarOpen} setOpen={setSidebarOpen} traceSteps={traceSteps} currentStep={currentTraceStep} isCurrentlyTracing={currentlyTracing} />
+      <TraceSidebar
+        open={sidebarOpen}
+        setOpen={setSidebarOpen}
+        traceSteps={traceSteps}
+        currentStep={currentTraceStep}
+        isCurrentlyTracing={currentlyTracing}
+      />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -155,11 +166,13 @@ export default function App() {
       >
         <Background />
         <AppInner
-        setCurrentTraceStep={setCurrentTraceStep}
-        traceSteps={traceSteps}
-        setTraceSteps={setTraceSteps}
-        currentlyTracing={currentlyTracing}
-        setCurrentlyTracing={setCurrentlyTracing}/>
+          currentTraceStep={currentTraceStep}
+          setCurrentTraceStep={setCurrentTraceStep}
+          traceSteps={traceSteps}
+          setTraceSteps={setTraceSteps}
+          currentlyTracing={currentlyTracing}
+          setCurrentlyTracing={setCurrentlyTracing}
+        />
       </ReactFlow>
     </div>
   );
